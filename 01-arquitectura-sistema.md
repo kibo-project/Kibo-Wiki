@@ -334,60 +334,6 @@ graph TB
     class CRON_TIMEOUTS,CRON_PRICING,CRON_CLEANUP cron
 ```
 
-## Security and Configuration
-
-### 🔒 **MVP Security**
-
-```mermaid
-graph TB
-    subgraph "🛡️ Frontend Security"
-        WALLET_AUTH[Wallet-based Authentication<br/>No passwords needed]
-        HTTPS_ONLY[HTTPS Only<br/>All communications encrypted]
-        CSP[Content Security Policy<br/>XSS protection]
-    end
-    
-    subgraph "🔐 API Security"
-        JWT_TOKENS[JWT Tokens<br/>Stateless authentication]
-        RATE_LIMITING[Rate Limiting<br/>Prevent abuse]
-        CORS[CORS Configuration<br/>Restricted origins]
-        INPUT_VALIDATION[Input Validation<br/>Schema validation]
-    end
-    
-    subgraph "🗄️ Database Security"
-        RLS[Row Level Security<br/>User data isolation]
-        ENCRYPTED_STORAGE[Encrypted Storage<br/>Sensitive data protection]
-        BACKUP_ENCRYPTION[Encrypted Backups<br/>Data persistence security]
-    end
-    
-    subgraph "⛓️ Blockchain Security"
-        ESCROW_WALLET[Controlled Escrow Wallet<br/>Centralized fund management]
-        TX_VERIFICATION[Transaction Verification<br/>Blockchain confirmations]
-        PRIVATE_KEY_MGMT[Private Key Management<br/>Secure key storage]
-    end
-
-    %% Security connections
-    WALLET_AUTH --> JWT_TOKENS
-    JWT_TOKENS --> RLS
-    ESCROW_WALLET --> TX_VERIFICATION
-    INPUT_VALIDATION --> ENCRYPTED_STORAGE
-```
-
-### ⚙️ **System Configuration**
-
-| Component      | Configuration      | MVP Value  |
-| -------------- | ------------------ | ---------- |
-| **Timeouts**   | PENDING\_PAYMENT   | 3 minutes  |
-|                | AVAILABLE          | 5 minutes  |
-|                | TAKEN              | 5 minutes  |
-| **Limits**     | Min order amount   | 10 BOB     |
-|                | Max order amount   | 10,000 BOB |
-| **Pricing**    | Update interval    | 30 seconds |
-| **Penalties**  | Ally timeout block | 30 minutes |
-| **Blockchain** | Network            | Polygon    |
-|                | Token              | USDT       |
-| **Storage**    | Max file size      | 5 MB       |
-|                | Allowed formats    | JPG, PNG   |
-
 ## Architectural Principles
 
 ### 🎯 **Separation of Concerns**
