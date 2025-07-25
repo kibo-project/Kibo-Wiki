@@ -27,7 +27,7 @@ graph TB
     subgraph "External Services"
         PRICE_API[Price API<br/>CoinGecko]
         QR_SCAN[QR Scanner<br/>HTML5]
-        BLOCKCHAIN[Polygon Network<br/>USDT]
+        BLOCKCHAIN[Mantle Network<br/>USDT]
     end
 
     subgraph "Users"
