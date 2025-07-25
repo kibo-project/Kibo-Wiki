@@ -1,10 +1,10 @@
-# 🏗️ Kibo - Arquitectura del Sistema
+# 🎗️ Kibo - System Architecture
 
-## Vista de Alto Nivel
+## High-Level Overview
 
 ```mermaid
 graph TB
-    subgraph "Cliente/Frontend"
+    subgraph "Client/Frontend"
         WEB[Web App Next.js]
         WALLET[Wallet Integration<br/>Privy]
     end
@@ -18,25 +18,25 @@ graph TB
         CRON[Serverless Cron Jobs]
     end
 
-    subgraph "Almacenamiento"
+    subgraph "Storage"
         DB[(Supabase PostgreSQL)]
         STORAGE[Supabase Storage]
         REALTIME[Supabase Realtime]
     end
 
-    subgraph "Servicios Externos"
+    subgraph "External Services"
         PRICE_API[Price API<br/>CoinGecko]
         QR_SCAN[QR Scanner<br/>HTML5]
         BLOCKCHAIN[Polygon Network<br/>USDT]
     end
 
-    subgraph "Usuarios"
-        USER[👤 Usuario]
-        ALLY[🤝 Aliado]
+    subgraph "Users"
+        USER[👤 User]
+        ALLY[🤝 Ally]
         ADMIN[👨‍💼 Admin]
     end
 
-    %% Conexiones principales
+    %% Main Connections
     USER --> WEB
     ALLY --> WEB
     ADMIN --> WEB
@@ -64,7 +64,7 @@ graph TB
     WEB --> QR_SCAN
     ESCROW --> BLOCKCHAIN
     
-    %% Estilos
+    %% Styles
     classDef frontend fill:#e1f5fe
     classDef backend fill:#f3e5f5
     classDef storage fill:#e8f5e8
@@ -78,13 +78,13 @@ graph TB
     class USER,ALLY,ADMIN users
 ```
 
-## Arquitectura de Componentes
+## Component Architecture
 
 ```mermaid
 graph TB
     subgraph "🖥️ Frontend Layer (Next.js)"
         HOME[🏠 Landing Page]
-        USER_DASH[👤 User Dashboard] 
+        USER_DASH[👤 User Dashboard]
         ALLY_DASH[🤝 Ally Dashboard]
         ADMIN_DASH[👨‍💼 Admin Panel]
         QR_COMP[📱 QR Scanner Component]
@@ -93,7 +93,7 @@ graph TB
 
     subgraph "⚙️ Backend API (Next.js API Routes)"
         AUTH_API[🔐 /api/auth/*]
-        ORDER_API[📋 /api/orders/*] 
+        ORDER_API[📋 /api/orders/*]
         QUOTE_API[💱 /api/quote]
         ADMIN_API[⚙️ /api/admin/*]
         UPLOAD_API[📤 /api/upload]
@@ -118,7 +118,7 @@ graph TB
         REALTIME_DB[⚡ Realtime Subscriptions]
     end
 
-    %% Conexiones Frontend → API
+    %% Frontend → API Connections
     HOME --> AUTH_API
     USER_DASH --> ORDER_API
     ALLY_DASH --> ORDER_API
@@ -126,7 +126,7 @@ graph TB
     QR_COMP --> QUOTE_API
     WALLET_COMP --> AUTH_API
     
-    %% Conexiones API → Services
+    %% API → Services Connections
     AUTH_API --> USER_SVC
     ORDER_API --> ORDER_SVC
     QUOTE_API --> PRICING_SVC
@@ -135,7 +135,7 @@ graph TB
     CRON_API --> ORDER_SVC
     CRON_API --> PRICING_SVC
     
-    %% Conexiones Services → Data
+    %% Services → Data Connections
     ORDER_SVC --> ORDERS_DB
     ORDER_SVC --> ESCROW_SVC
     ORDER_SVC --> NOTIFY_SVC
@@ -147,7 +147,7 @@ graph TB
     ORDER_SVC --> LOGS_DB
     ESCROW_SVC --> LOGS_DB
     
-    %% Estilos
+    %% Styles
     classDef frontend fill:#e3f2fd
     classDef api fill:#fff8e1
     classDef services fill:#fce4ec
@@ -159,7 +159,7 @@ graph TB
     class ORDERS_DB,USERS_DB,QUOTES_DB,ESCROW_DB,LOGS_DB,FILES_STORAGE,REALTIME_DB data
 ```
 
-## Stack Tecnológico Detallado
+## Detailed Tech Stack
 
 ```mermaid
 graph TB
@@ -196,7 +196,7 @@ graph TB
         MONITORING[Vercel Analytics<br/>Performance Monitoring]
     end
 
-    %% Relaciones
+    %% Relationships
     NEXTJS --> NEXTJS_API
     TAILWIND --> NEXTJS
     PRIVY --> NEXTJS
@@ -219,7 +219,7 @@ graph TB
     GITHUB --> VERCEL
     VERCEL --> MONITORING
     
-    %% Estilos
+    %% Styles
     classDef frontend fill:#e1f5fe
     classDef backend fill:#f3e5f5  
     classDef database fill:#e8f5e8
@@ -233,11 +233,11 @@ graph TB
     class VERCEL,GITHUB,MONITORING devops
 ```
 
-## Flujo de Datos Principal
+## Main Data Flow
 
 ```mermaid
 sequenceDiagram
-    participant U as 👤 Usuario
+    participant U as 👤 User
     participant F as 🖥️ Frontend
     participant API as ⚙️ Next.js API
     participant P as 💱 Pricing Service
@@ -245,37 +245,37 @@ sequenceDiagram
     participant DB as 🗄️ Supabase
     participant BC as ⛓️ Polygon
 
-    Note over U,BC: FLUJO PRINCIPAL: Usuario Crea y Paga Orden
+    Note over U,BC: MAIN FLOW: User Creates and Pays Order
 
-    U->>F: Escanea QR + ingresa monto BOB
+    U->>F: Scans QR + enters amount BOB
     F->>API: POST /api/quote
     Note right of API: {qrData, amountBOB}
     
-    API->>P: Calcular equivalente USDT
-    P->>DB: Obtener cotización actual
-    DB-->>P: Rate USDT/BOB
-    P-->>API: Monto USDT calculado
+    API->>P: Calculate USDT equivalent
+    P->>DB: Fetch current rate
+    DB-->>P: USDT/BOB rate
+    P-->>API: Calculated USDT amount
     
-    API->>DB: Crear orden (PENDING_PAYMENT)
-    Note right of DB: Cotización fija por 3 min
-    DB-->>API: Orden creada con ID
+    API->>DB: Create order (PENDING_PAYMENT)
+    Note right of DB: Fixed rate for 3 min
+    DB-->>API: Order created with ID
     
     API-->>F: {orderId, amountUSDT, escrowAddress, expiresAt}
-    F-->>U: "Paga X USDT en 3 minutos"
+    F-->>U: "Pay X USDT within 3 minutes"
     
     Note over F: Countdown timer 3:00
-    U->>F: Confirma pago
+    U->>F: Confirms payment
     F->>U: Privy wallet prompt
-    U->>BC: Aprueba transacción USDT
+    U->>BC: Approves USDT transaction
     
-    BC->>E: Webhook: Fondos recibidos
-    E->>API: Notificar pago confirmado
-    API->>DB: Actualizar estado → AVAILABLE
-    DB->>F: Realtime: Orden disponible
-    F-->>U: "✅ Pago confirmado. Buscando aliado..."
+    BC->>E: Webhook: Funds received
+    E->>API: Notify confirmed payment
+    API->>DB: Update status → AVAILABLE
+    DB->>F: Realtime: Order available
+    F-->>U: "✅ Payment confirmed. Finding ally..."
 ```
 
-## Arquitectura de APIs (Next.js Routes)
+## API Architecture (Next.js Routes)
 
 ```mermaid
 graph TB
@@ -318,7 +318,7 @@ graph TB
         CRON_CLEANUP[POST /api/cron/cleanup\nClean old data]
     end
 
-    %% Estilos por categoría
+    %% Styles by category
     classDef auth fill:#ffebee
     classDef quote fill:#e8f5e8
     classDef order fill:#e3f2fd
@@ -332,12 +332,11 @@ graph TB
     class UPLOAD_QR,UPLOAD_PROOF upload
     class ADMIN_DASHBOARD,ADMIN_ORDERS,ADMIN_USERS,ADMIN_CONFIG admin
     class CRON_TIMEOUTS,CRON_PRICING,CRON_CLEANUP cron
-
 ```
 
-## Seguridad y Configuración
+## Security and Configuration
 
-### 🔒 **Seguridad MVP**
+### 🔒 **MVP Security**
 
 ```mermaid
 graph TB
@@ -366,68 +365,73 @@ graph TB
         PRIVATE_KEY_MGMT[Private Key Management<br/>Secure key storage]
     end
 
-    %% Conexiones de seguridad
+    %% Security connections
     WALLET_AUTH --> JWT_TOKENS
     JWT_TOKENS --> RLS
     ESCROW_WALLET --> TX_VERIFICATION
     INPUT_VALIDATION --> ENCRYPTED_STORAGE
 ```
 
-### ⚙️ **Configuración del Sistema**
+### ⚙️ **System Configuration**
 
-| Componente | Configuración | Valor MVP |
-|------------|---------------|-----------|
-| **Timeouts** | PENDING_PAYMENT | 3 minutos |
-| | AVAILABLE | 5 minutos |
-| | TAKEN | 5 minutos |
-| **Limits** | Min order amount | 10 BOB |
-| | Max order amount | 10,000 BOB |
-| **Pricing** | Update interval | 30 segundos |
-| **Penalties** | Ally timeout block | 30 minutos |
-| **Blockchain** | Network | Polygon |
-| | Token | USDT |
-| **Storage** | Max file size | 5 MB |
-| | Allowed formats | JPG, PNG |
+| Component      | Configuration      | MVP Value  |
+| -------------- | ------------------ | ---------- |
+| **Timeouts**   | PENDING\_PAYMENT   | 3 minutes  |
+|                | AVAILABLE          | 5 minutes  |
+|                | TAKEN              | 5 minutes  |
+| **Limits**     | Min order amount   | 10 BOB     |
+|                | Max order amount   | 10,000 BOB |
+| **Pricing**    | Update interval    | 30 seconds |
+| **Penalties**  | Ally timeout block | 30 minutes |
+| **Blockchain** | Network            | Polygon    |
+|                | Token              | USDT       |
+| **Storage**    | Max file size      | 5 MB       |
+|                | Allowed formats    | JPG, PNG   |
 
-## Principios Arquitectónicos
+## Architectural Principles
 
-### 🎯 **Separación de Responsabilidades**
-- **Frontend**: Solo UI/UX y presentación
-- **API Routes**: Validación, autenticación y orquestación
-- **Services**: Lógica de negocio pura y reglas
-- **Database**: Persistencia y consultas optimizadas
+### 🎯 **Separation of Concerns**
 
-### 🔄 **Escalabilidad Serverless**
-- **Next.js API Routes**: Auto-scaling según demanda
-- **Vercel Functions**: Execución bajo demanda
-- **Supabase**: Managed database con auto-scaling
-- **Edge-ready**: Preparado para distribución global
+* **Frontend**: UI/UX and presentation only
+* **API Routes**: Validation, authentication, and orchestration
+* **Services**: Pure business logic and rules
+* **Database**: Persistence and optimized queries
 
-### 🛡️ **Seguridad por Capas**
-- **Wallet Authentication**: Sin contraseñas tradicionales
-- **Row Level Security**: Aislamiento de datos por usuario
-- **Escrow Centralizado**: Control total de fondos en MVP
-- **Audit Logs**: Trazabilidad completa de acciones
+### 🔄 **Serverless Scalability**
 
-### ⚡ **Performance Optimizado**
-- **Static Generation**: Páginas estáticas donde sea posible
-- **Realtime Updates**: Solo datos que cambian frecuentemente
-- **Image Optimization**: Next.js Image component
-- **Edge Caching**: CDN para assets estáticos
+* **Next.js API Routes**: Auto-scaling on demand
+* **Vercel Functions**: On-demand execution
+* **Supabase**: Managed database with auto-scaling
+* **Edge-ready**: Global distribution support
+
+### 🛡️ **Layered Security**
+
+* **Wallet Authentication**: No traditional passwords
+* **Row Level Security**: User data isolation
+* **Centralized Escrow**: Full control of funds in MVP
+* **Audit Logs**: Complete action traceability
+
+### ⚡ **Optimized Performance**
+
+* **Static Generation**: Static pages wherever possible
+* **Realtime Updates**: Only for frequently changing data
+* **Image Optimization**: Next.js Image component
+* **Edge Caching**: CDN for static assets
 
 ---
 
-**📝 Notas para el Equipo:**
+**📝 Notes for the Team:**
 
-- ✅ **Stack unificado**: Next.js tanto para frontend como backend
-- ✅ **Serverless-first**: Escalable automáticamente sin gestión de servidores
-- ✅ **TypeScript everywhere**: Type safety en toda la aplicación
-- ✅ **Supabase como backbone**: Database, Storage, Realtime en una plataforma
-- ✅ **Privy para crypto**: Abstrae complejidad de wallet management
-- ✅ **Vercel deployment**: Deploy automático desde Git
+* ✅ **Unified stack**: Next.js for both frontend and backend
+* ✅ **Serverless-first**: Auto-scalable, no server management
+* ✅ **TypeScript everywhere**: Type safety throughout the app
+* ✅ **Supabase as backbone**: Database, Storage, Realtime on one platform
+* ✅ **Privy for crypto**: Abstracts wallet management complexity
+* ✅ **Vercel deployment**: Automatic deploy from Git
 
-**🔑 Decisiones Técnicas Clave:**
-- **Escrow centralizado**: Backend controla wallet, no smart contracts
-- **Auto-aprobación**: Comprobantes se aprueban automáticamente en MVP
-- **Timeouts agresivos**: UX rápida, previene fondos bloqueados
-- **Mobile-first**: Optimizado para uso móvil principalmente
+**🔑 Key Technical Decisions:**
+
+* **Centralized escrow**: Backend controls wallet, no smart contracts
+* **Auto-approval**: Proofs auto-approved in MVP
+* **Aggressive timeouts**: Fast UX, prevents blocked funds
+* **Mobile-first**: Optimized for mobile usage primarily
