@@ -186,7 +186,7 @@ graph TB
     
     subgraph "External Integrations"
         COINGECKO[CoinGecko API<br/>Price Feeds]
-        POLYGON[Polygon Network<br/>USDT Transactions]
+        Mantle [Mantle Network<br/>USDT Transactions]
         PRIVY_AUTH[Privy Authentication<br/>Wallet Management]
     end
     
@@ -211,7 +211,7 @@ graph TB
     SUPABASE --> ROW_SECURITY
     
     NEXTJS_API --> COINGECKO
-    NEXTJS_API --> POLYGON
+    NEXTJS_API --> Mantle
     PRIVY --> PRIVY_AUTH
     
     VERCEL --> NEXTJS
@@ -229,7 +229,7 @@ graph TB
     class NEXTJS,TAILWIND,PRIVY,SUPABASE_CLIENT frontend
     class NEXTJS_API,TYPESCRIPT,VERCEL_CRON backend
     class SUPABASE,POSTGRESQL,REALTIME_SUB,STORAGE_SUB,ROW_SECURITY database
-    class COINGECKO,POLYGON,PRIVY_AUTH external
+    class COINGECKO,MANTLE,PRIVY_AUTH external
     class VERCEL,GITHUB,MONITORING devops
 ```
 
@@ -243,7 +243,7 @@ sequenceDiagram
     participant P as 💱 Pricing Service
     participant E as 🏦 Escrow Service
     participant DB as 🗄️ Supabase
-    participant BC as ⛓️ Polygon
+    participant BC as ⛓️ Mantle
 
     Note over U,BC: MAIN FLOW: User Creates and Pays Order
 
