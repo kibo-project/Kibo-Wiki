@@ -1,118 +1,126 @@
 # 📚 Kibo App
 
-Kibo permite a usuarios pagar cualquier QR de transferencia bancaria tradicional (fiat) usando criptomonedas como USDT, a través de una red de aliados P2P que actúan como puente entre el mundo crypto y el sistema bancario.
+Kibo allows users to pay any traditional bank transfer QR (fiat) using cryptocurrencies like USDT, through a P2P network of partners who act as a bridge between the crypto world and the banking system.
 
-## 📋 **Índice de Documentación**
+## 📋 **Documentation Index**
 
-### **🏗️ Fase 1 - Documentación Core (Imprescindible)**
+### **🗷️ Phase 1 - Core Documentation (Essential)**
 
-| Archivo | Descripción | Audiencia |
-|---------|-------------|-----------|
-| [`01-arquitectura-sistema.md`](./01-arquitectura-sistema.md) | Vista general del sistema, componentes y stack tecnológico | Todo el equipo |
-| [`02-estados-y-flujos.md`](./02-estados-y-flujos.md) | State machine de órdenes y flujos de proceso por actor | Developers + QA |
-| [`03-modelo-datos.md`](./03-modelo-datos.md) | Esquema completo de base de datos y relaciones | Backend Dev |
-| [`04-navegacion-ux.md`](./04-navegacion-ux.md) | Mapas de navegación y experiencia de usuario | Frontend Dev + UX |
-| [`05-casos-uso.md`](./05-casos-uso.md) | User stories detalladas y plan de sprints | Product Owner + Todo el equipo |
+| File                                                       | Description                                    | Audience                    |
+| ---------------------------------------------------------- | ---------------------------------------------- | --------------------------- |
+| [`01-system-architecture.md`](./01-system-architecture.md) | System overview, components, and tech stack    | Entire team                 |
+| [`02-states-and-flows.md`](./02-states-and-flows.md)       | Order state machine and process flows by actor | Developers + QA             |
+| [`03-data-model.md`](./03-data-model.md)                   | Complete database schema and relationships     | Backend Dev                 |
+| [`04-navigation-ux.md`](./04-navigation-ux.md)             | Navigation maps and user experience            | Frontend Dev + UX           |
+| [`05-use-cases.md`](./05-use-cases.md)                     | Detailed user stories and sprint plan          | Product Owner + Entire team |
 
-## 🚀 **Stack Tecnológico**
+## 🚀 **Tech Stack**
 
-- **Frontend**: Next.js 14 + Tailwind CSS
-- **Backend**: Next.js API Routes (serverless)
-- **Base de Datos**: Supabase (PostgreSQL)
-- **Autenticación**: Privy (wallet connect)
-- **Storage**: Supabase Storage
-- **Realtime**: Supabase Realtime
-- **Deployment**: Vercel
-- **Blockchain**: Polygon (USDT)
+* **Frontend**: Next.js 14 + Tailwind CSS
+* **Backend**: Next.js API Routes (serverless)
+* **Database**: Supabase (PostgreSQL)
+* **Authentication**: Privy (wallet connect)
+* **Storage**: Supabase Storage
+* **Realtime**: Supabase Realtime
+* **Deployment**: Vercel
+* **Blockchain**: Polygon (USDT)
 
-## 🔄 **Flujo Principal del MVP**
+## 🔄 **Main MVP Flow**
 
 ```mermaid
 graph LR
-    A[👤 Usuario<br/>Escanea QR + BOB] --> B[💱 Sistema<br/>Calcula USDT]
-    B --> C[💳 Usuario<br/>Paga USDT]
-    C --> D[🤝 Aliado<br/>Toma orden]
-    D --> E[🏦 Aliado<br/>Paga QR bancario]
-    E --> F[📤 Aliado<br/>Sube comprobante]
-    F --> G[✅ Sistema<br/>Libera USDT]
+    A[👤 User<br/>Scans QR + BOB] --> B[🚱 System<br/>Calculates USDT]
+    B --> C[💳 User<br/>Pays USDT]
+    C --> D[🤝 Partner<br/>Takes order]
+    D --> E[🏦 Partner<br/>Pays bank QR]
+    E --> F[📄 Partner<br/>Uploads receipt]
+    F --> G[✅ System<br/>Releases USDT]
 ```
 
-## ⏰ **Timeouts del Sistema**
+## ⏰ **System Timeouts**
 
-| Estado | Timeout | Acción al Expirar |
-|--------|---------|-------------------|
-| PENDING_PAYMENT | 3 min | Eliminar orden |
-| AVAILABLE | 5 min | Refund automático |
-| TAKEN | 5 min | Refund + penalizar aliado |
+| State            | Timeout | Action on Expiration      |
+| ---------------- | ------- | ------------------------- |
+| PENDING\_PAYMENT | 3 min   | Delete order              |
+| AVAILABLE        | 5 min   | Automatic refund          |
+| TAKEN            | 5 min   | Refund + penalize partner |
 
-## 🎯 **MVP - Alcance Inicial**
+## 🎯 **MVP - Initial Scope**
 
-### **✅ Incluido en MVP**
-- ✅ Soporte Bolivia (BOB) + USDT/Polygon
-- ✅ Escrow centralizado en backend
-- ✅ Verificación automática de comprobantes (sin admin)
-- ✅ Timeouts automáticos y refunds
-- ✅ Dashboard básico para cada tipo de usuario
-- ✅ Sistema de penalizaciones para aliados
+### **✅ Included in MVP**
 
-### **❌ No Incluido en MVP**
-- ❌ Verificación manual de comprobantes
-- ❌ Múltiples países/monedas
-- ❌ OCR de comprobantes
-- ❌ Sistema de reputación complejo
-- ❌ Smart contracts descentralizados
-- ❌ App móvil nativa
+* ✅ Support for Bolivia (BOB) + USDT/Polygon
+* ✅ Centralized escrow on backend
+* ✅ Automatic receipt verification (no admin)
+* ✅ Automatic timeouts and refunds
+* ✅ Basic dashboard for each user type
+* ✅ Penalty system for partners
 
-## 📊 **Plan de Desarrollo**
+### **❌ Not Included in MVP**
 
-| Sprint | Duración | Objetivo | Entregable |
-|--------|----------|----------|------------|
-| **Sprint 1** | 2 semanas | Core Usuario | Usuario puede pagar órdenes |
-| **Sprint 2** | 2 semanas | Core Aliado | Flujo completo funcional |
-| **Sprint 3** | 2 semanas | Sistema Robusto | Timeouts y refunds automáticos |
-| **Sprint 4** | 1 semana | Admin + Polish | MVP production-ready |
+* ❌ Manual receipt verification
+* ❌ Multiple countries/currencies
+* ❌ OCR for receipts
+* ❌ Complex reputation system
+* ❌ Decentralized smart contracts
+* ❌ Native mobile app
 
-## 🔧 **Cómo Usar Esta Documentación**
+## 📊 **Development Plan**
 
-### **Para Desarrolladores**
-1. Leer **01-arquitectura-sistema.md** para entender el big picture
-2. Revisar **02-estados-y-flujos.md** para entender la lógica de negocio
-3. Estudiar **03-modelo-datos.md** para el diseño de BD
-4. Implementar según **05-casos-uso.md** (user stories priorizadas)
+| Sprint       | Duration | Goal           | Deliverable                    |
+| ------------ | -------- | -------------- | ------------------------------ |
+| **Sprint 1** | 2 weeks  | User Core      | User can pay orders            |
+| **Sprint 2** | 2 weeks  | Partner Core   | Fully functional flow          |
+| **Sprint 3** | 2 weeks  | Robust System  | Automatic timeouts and refunds |
+| **Sprint 4** | 1 week   | Admin + Polish | Production-ready MVP           |
 
-### **Para Product Owner**
-1. Enfocarse en **05-casos-uso.md** para criterios de aceptación
-2. Usar **04-navegacion-ux.md** para validar experiencia de usuario
-3. Seguir el plan de sprints definido
+## 🔧 **How to Use This Documentation**
 
-### **Para QA**
-1. **05-casos-uso.md** contiene todos los criterios testeable
-2. **02-estados-y-flujos.md** define las transiciones de estado a probar
-3. **04-navegacion-ux.md** mapea los flujos de usuario a validar
+### **For Developers**
 
-## 🚨 **Consideraciones Importantes**
+1. Read **01-system-architecture.md** to understand the big picture
+2. Review **02-states-and-flows.md** to understand business logic
+3. Study **03-data-model.md** for database design
+4. Implement according to **05-use-cases.md** (prioritized user stories)
 
-### **Seguridad MVP**
-- **Escrow centralizado**: Fondos custodiados en wallet controlada por backend
-- **Sin verificación admin**: Comprobante subido = aprobación automática
-- **Timeouts agresivos**: Previenen fondos bloqueados
-- **Logs completos**: Auditoría de todas las acciones
+### **For Product Owner**
 
-### **Escalabilidad Futura**
-- **Arquitectura modular**: Fácil migración a microservicios
-- **BD normalizada**: Soporte para múltiples países/tokens
-- **Configuración dinámica**: Timeouts ajustables sin redeploy
+1. Focus on **05-use-cases.md** for acceptance criteria
+2. Use **04-navigation-ux.md** to validate user experience
+3. Follow the defined sprint plan
 
-### **UX Críticos**
-- **Mobile-first**: Todas las pantallas optimizadas para móvil
-- **Timeouts visibles**: Countdown timers en tiempo real
-- **Estados claros**: Usuario siempre sabe qué está pasando
-- **Notificaciones**: Updates automáticos de estado
+### **For QA**
+
+1. **05-use-cases.md** contains all testable criteria
+2. **02-states-and-flows.md** defines state transitions to test
+3. **04-navigation-ux.md** maps user flows to validate
+
+## 🚨 **Important Considerations**
+
+### **MVP Security**
+
+* **Centralized escrow**: Funds are held in a wallet controlled by the backend
+* **No admin verification**: Receipt upload = automatic approval
+* **Aggressive timeouts**: Prevents locked funds
+* **Full logs**: Action audit trail
+
+### **Future Scalability**
+
+* **Modular architecture**: Easy migration to microservices
+* **Normalized DB**: Supports multiple countries/tokens
+* **Dynamic configuration**: Adjustable timeouts without redeploy
+
+### **Critical UX**
+
+* **Mobile-first**: All screens optimized for mobile
+* **Visible timeouts**: Real-time countdown timers
+* **Clear states**: Users always know what's happening
+* **Notifications**: Automatic status updates
 
 ---
 
-**📞 Contacto del Proyecto**  
-Para dudas sobre esta documentación o el proyecto Kibo, contactar al equipo de desarrollo.
+**📞 Project Contact**
+For questions about this documentation or the Kibo project, contact the development team.
 
-**📄 Licencia**  
-Esta documentación es privada y confidencial del proyecto Kibo.
+**📄 License**
+This documentation is private and confidential for the Kibo project.
