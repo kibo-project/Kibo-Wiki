@@ -8,11 +8,11 @@ Kibo allows users to pay any traditional bank transfer QR (fiat) using cryptocur
 
 | File                                                       | Description                                    | Audience                    |
 | ---------------------------------------------------------- | ---------------------------------------------- | --------------------------- |
-| [`01-system-architecture.md`](./01-system-architecture.md) | System overview, components, and tech stack    | Entire team                 |
-| [`02-states-and-flows.md`](./02-states-and-flows.md)       | Order state machine and process flows by actor | Developers + QA             |
-| [`03-data-model.md`](./03-data-model.md)                   | Complete database schema and relationships     | Backend Dev                 |
-| [`04-navigation-ux.md`](./04-navigation-ux.md)             | Navigation maps and user experience            | Frontend Dev + UX           |
-| [`05-use-cases.md`](./05-use-cases.md)                     | Detailed user stories and sprint plan          | Product Owner + Entire team |
+| [`01-system-architecture.md`](./01-arquitectura-sistema.md) | System overview, components, and tech stack    | Entire team                 |
+| [`02-states-and-flows.md`](./02-estados-y-flujos.md)       | Order state machine and process flows by actor | Developers + QA             |
+| [`03-data-model.md`](./03-modelo-datos.md)                   | Complete database schema and relationships     | Backend Dev                 |
+| [`04-navigation-ux.md`](./04-navegacion-ux.md)             | Navigation maps and user experience            | Frontend Dev + UX           |
+| [`05-use-cases.md`](./05-casos-uso.md)                     | Detailed user stories and sprint plan          | Product Owner + Entire team |
 
 ## 🚀 **Tech Stack**
 
