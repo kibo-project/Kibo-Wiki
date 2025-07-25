@@ -186,7 +186,7 @@ graph TB
     
     subgraph "External Integrations"
         COINGECKO[CoinGecko API<br/>Price Feeds]
-        Mantle [Mantle Network<br/>USDT Transactions]
+        Mantle[Mantle Network<br/>USDT Transactions]
         PRIVY_AUTH[Privy Authentication<br/>Wallet Management]
     end
     
