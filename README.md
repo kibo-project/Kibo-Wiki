@@ -23,7 +23,7 @@ Kibo allows users to pay any traditional bank transfer QR (fiat) using cryptocur
 * **Storage**: Supabase Storage
 * **Realtime**: Supabase Realtime
 * **Deployment**: Vercel
-* **Blockchain**: Polygon (USDT)
+* **Blockchain**: Mantle (USDT)
 
 ## 🔄 **Main MVP Flow**
 
@@ -49,7 +49,7 @@ graph LR
 
 ### **✅ Included in MVP**
 
-* ✅ Support for Bolivia (BOB) + USDT/Polygon
+* ✅ Support for Bolivia (BOB) + USDT/Mantle
 * ✅ Centralized escrow on backend
 * ✅ Automatic receipt verification (no admin)
 * ✅ Automatic timeouts and refunds
