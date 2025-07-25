@@ -69,8 +69,8 @@ graph LR
 
 | Sprint       | Duration | Goal           | Deliverable                    |
 | ------------ | -------- | -------------- | ------------------------------ |
-| **Sprint 1** | 2 weeks  | User Core      | User can pay orders            |
-| **Sprint 2** | 2 weeks  | Partner Core   | Fully functional flow          |
+| **Sprint 1** | 1 weeks  | User Core      | User can pay orders            |
+| **Sprint 2** | 1 weeks  | Partner Core   | Fully functional flow          |
 | **Sprint 3** | 2 weeks  | Robust System  | Automatic timeouts and refunds |
 | **Sprint 4** | 1 week   | Admin + Polish | Production-ready MVP           |
 
