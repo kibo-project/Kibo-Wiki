@@ -23,7 +23,7 @@ erDiagram
         text crypto_token "USDT|USDC|ETH"
         numeric amount_fiat "Monto en moneda local"
         numeric amount_crypto "Monto en criptomoneda"
-        text network "polygon|mantle|base"
+        text network "mantle|mantle|base"
         uuid user_id FK "Usuario que crea orden"
         uuid ally_id FK "Aliado asignado (nullable)"
         text qr_data "Datos extraídos del QR"
@@ -42,9 +42,9 @@ erDiagram
         text token "USDT|USDC|ETH"
         text fiat "BOB|MXN|ARS"
         numeric rate "Precio token en fiat"
-        text source "coingecko|binance|local"
+        text source "binance_api/coingecko|binance|local"
         timestamptz timestamp "Cuándo se obtuvo"
-        boolean is_active "Si es la cotización actual"
+        boolean is_active "Si es el quote actual"
     }
 
     ESCROW_ACCOUNTS {
@@ -53,7 +53,7 @@ erDiagram
         text wallet_address "Dirección escrow centralizada"
         numeric amount_locked "Cantidad bloqueada"
         text token_type "USDT|USDC|ETH"
-        text network "polygon|mantle|base"
+        text network "mantle|mantle|base"
         text status "LOCKED|RELEASED|REFUNDED"
         text tx_hash_deposit "Hash del depósito"
         text tx_hash_release "Hash liberación/refund"
@@ -93,7 +93,7 @@ erDiagram
         text user_wallet "Wallet destino del refund"
         numeric amount "Cantidad a devolver"
         text token "USDT|USDC|ETH"
-        text network "polygon|mantle|base"
+        text network "mantle|mantle|base"
         text status "PENDING|PROCESSING|COMPLETED|FAILED"
         text tx_hash "Hash transacción refund"
         timestamptz created_at
@@ -107,7 +107,7 @@ erDiagram
     ORDERS ||--o{ LOGS : "order_id (auditoría)"
     ORDERS ||--o{ ALLY_PENALTIES : "order_id (causó penalización)"
     ORDERS ||--o{ REFUND_JOBS : "order_id (genera refund)"
-    QUOTES }|--|| ORDERS : "cotización usada"
+    QUOTES }|--|| ORDERS : "quote usada"
     USERS ||--o{ ALLY_PENALTIES : "ally_id (recibe penalización)"
 ```
 
@@ -144,7 +144,7 @@ CREATE INDEX idx_users_active_allies ON users(role, last_active) WHERE role = 'a
 | `crypto_token` | TEXT | Token crypto (USDT, USDC, ETH) | NOT NULL, DEFAULT 'USDT' |
 | `amount_fiat` | NUMERIC(10,2) | Cantidad en moneda fiat | NOT NULL, CHECK (amount_fiat > 0) |
 | `amount_crypto` | NUMERIC(18,8) | Cantidad en criptomoneda | NOT NULL, CHECK (amount_crypto > 0) |
-| `network` | TEXT | Red blockchain | NOT NULL, DEFAULT 'polygon' |
+| `network` | TEXT | Red blockchain | NOT NULL, DEFAULT 'mantle' |
 | `user_id` | UUID | Usuario que crea la orden | NOT NULL, REFERENCES users(id) |
 | `ally_id` | UUID | Aliado asignado | REFERENCES users(id) |
 | `qr_data` | TEXT | Datos extraídos del QR | NOT NULL |
@@ -167,17 +167,17 @@ CREATE INDEX idx_orders_expires ON orders(expires_at) WHERE status IN ('PENDING_
 CREATE INDEX idx_orders_country ON orders(user_id) INCLUDE (status);
 ```
 
-### 💱 **QUOTES - Cotizaciones de Mercado**
+### 💱 **QUOTES - Quotes de Mercado**
 
 | Campo | Tipo | Descripción | Constraints |
 |-------|------|-------------|-------------|
-| `id` | UUID | ID único de la cotización | PRIMARY KEY, DEFAULT gen_random_uuid() |
+| `id` | UUID | ID único del quote | PRIMARY KEY, DEFAULT gen_random_uuid() |
 | `token` | TEXT | Token cotizado | NOT NULL |
 | `fiat` | TEXT | Moneda fiat de referencia | NOT NULL |
 | `rate` | NUMERIC(18,8) | Precio del token en fiat | NOT NULL, CHECK (rate > 0) |
-| `source` | TEXT | Fuente de la cotización | NOT NULL, DEFAULT 'coingecko' |
+| `source` | TEXT | Fuente del quote | NOT NULL, DEFAULT 'binance_api/coingecko' |
 | `timestamp` | TIMESTAMPTZ | Cuándo se obtuvo | DEFAULT NOW() |
-| `is_active` | BOOLEAN | Si es la cotización actual | DEFAULT true |
+| `is_active` | BOOLEAN | Si es el quote actual | DEFAULT true |
 
 **Índices:**
 ```sql
@@ -194,7 +194,7 @@ CREATE INDEX idx_quotes_history ON quotes(token, fiat, timestamp DESC);
 | `wallet_address` | TEXT | Dirección wallet escrow | NOT NULL |
 | `amount_locked` | NUMERIC(18,8) | Cantidad bloqueada | NOT NULL, CHECK (amount_locked > 0) |
 | `token_type` | TEXT | Tipo de token | NOT NULL, DEFAULT 'USDT' |
-| `network` | TEXT | Red blockchain | NOT NULL, DEFAULT 'polygon' |
+| `network` | TEXT | Red blockchain | NOT NULL, DEFAULT 'mantle' |
 | `status` | TEXT | Estado del escrow | CHECK (status IN ('LOCKED', 'RELEASED', 'REFUNDED')), DEFAULT 'LOCKED' |
 | `tx_hash_deposit` | TEXT | Hash del depósito | |
 | `tx_hash_release` | TEXT | Hash de liberación/refund | |
@@ -265,7 +265,7 @@ INSERT INTO system_config (key, value, description) VALUES
 ('AVAILABLE_TIMEOUT_MINUTES', '5', 'Timeout para que aliado tome orden'),
 ('TAKEN_TIMEOUT_MINUTES', '5', 'Timeout para que aliado suba comprobante'),
 ('ALLY_PENALTY_MINUTES', '30', 'Minutos de penalización por timeout'),
-('QUOTE_UPDATE_INTERVAL_SECONDS', '30', 'Intervalo de actualización de cotizaciones'),
+('QUOTE_UPDATE_INTERVAL_SECONDS', '30', 'Intervalo de actualización de quotes'),
 ('MIN_ORDER_AMOUNT_BOB', '10', 'Monto mínimo de orden en bolivianos'),
 ('MAX_ORDER_AMOUNT_BOB', '10000', 'Monto máximo de orden en bolivianos'),
 ('ESCROW_WALLET_ADDRESS', '0x...', 'Dirección del wallet escrow centralizado');
@@ -280,7 +280,7 @@ INSERT INTO system_config (key, value, description) VALUES
 | `user_wallet` | TEXT | Wallet destino del refund | NOT NULL |
 | `amount` | NUMERIC(18,8) | Cantidad a devolver | NOT NULL, CHECK (amount > 0) |
 | `token` | TEXT | Token a devolver | NOT NULL, DEFAULT 'USDT' |
-| `network` | TEXT | Red blockchain | NOT NULL, DEFAULT 'polygon' |
+| `network` | TEXT | Red blockchain | NOT NULL, DEFAULT 'mantle' |
 | `status` | TEXT | Estado del refund | CHECK (status IN ('PENDING', 'PROCESSING', 'COMPLETED', 'FAILED')), DEFAULT 'PENDING' |
 | `tx_hash` | TEXT | Hash de la transacción refund | |
 | `created_at` | TIMESTAMPTZ | Cuándo se creó el job | DEFAULT NOW() |
@@ -461,7 +461,7 @@ END;
 $ LANGUAGE plpgsql;
 ```
 
-### 💱 **Función: Obtener Cotización Actual**
+### 💱 **Función: Obtener Quote Actual**
 
 ```sql
 CREATE OR REPLACE FUNCTION get_current_rate(token_param TEXT, fiat_param TEXT)

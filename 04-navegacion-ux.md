@@ -17,7 +17,7 @@ graph TD
         USER_HOME --> SCAN[📱 Escanear QR]
         USER_HOME --> HISTORY_U[📋 Mis Órdenes]
         
-        SCAN --> QUOTE[💱 Ver Cotización<br/>⏱️ 3:00 countdown]
+        SCAN --> QUOTE[💱 Ver Quote<br/>⏱️ 3:00 countdown]
         QUOTE -->|Confirmar| PAY[💳 Pagar USDT<br/>Privy Wallet]
         QUOTE -->|Cancelar| USER_HOME
         
@@ -110,7 +110,7 @@ stateDiagram-v2
     QuoteScreen --> PaymentScreen : Confirmar
     QuoteScreen --> UserDashboard : Cancelar
     QuoteScreen --> QuoteExpired : Timeout 3min
-    QuoteExpired --> ScanQR : Nueva cotización
+    QuoteExpired --> ScanQR : Nuevo quote
     
     PaymentScreen --> WaitingScreen : Pago confirmado
     PaymentScreen --> PaymentError : Pago falló
@@ -133,7 +133,7 @@ stateDiagram-v2
 
     note right of QuoteScreen
         Countdown 3:00 visible
-        Cotización fija durante timer
+        Quote fijo durante timer
         Auto-refresh si expira
     end note
 
@@ -233,7 +233,7 @@ graph TB
         NAV[Inicio - Órdenes - Perfil - Logout]
         
         subgraph "Balance Card"
-            BALANCE[Mi Balance 250.00 USDT - Red Polygon]
+            BALANCE[Mi Balance 250.00 USDT - Red mantle]
             REFRESH_BALANCE[Actualizar Balance]
         end
         

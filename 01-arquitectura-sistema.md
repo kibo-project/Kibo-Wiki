@@ -13,7 +13,7 @@ graph TB
         API[Next.js API Routes]
         AUTH[Authentication Service]
         ORDER[Orders Service]
-        PRICING[Pricing Service]
+        QUOTE[Quote Service]
         ESCROW[Escrow Service]
         CRON[Serverless Cron Jobs]
     end
@@ -25,7 +25,7 @@ graph TB
     end
 
     subgraph "External Services"
-        PRICE_API[Price API<br/>CoinGecko]
+        PRICE_API[Price API<br/>binance_api/coingecko]
         QR_SCAN[QR Scanner<br/>HTML5]
         BLOCKCHAIN[Mantle Network<br/>USDT]
     end
@@ -46,21 +46,21 @@ graph TB
     
     API --> AUTH
     API --> ORDER
-    API --> PRICING
+    API --> QUOTE
     API --> ESCROW
     
     CRON --> ORDER
-    CRON --> PRICING
+    CRON --> QUOTE
     
     ORDER --> DB
-    PRICING --> DB
+    QUOTE --> DB
     ESCROW --> DB
     AUTH --> DB
     
     ORDER --> STORAGE
     ORDER --> REALTIME
     
-    PRICING --> PRICE_API
+    QUOTE --> PRICE_API
     WEB --> QR_SCAN
     ESCROW --> BLOCKCHAIN
     
@@ -72,7 +72,7 @@ graph TB
     classDef users fill:#fce4ec
     
     class WEB,WALLET frontend
-    class API,AUTH,ORDER,PRICING,ESCROW,CRON backend
+    class API,AUTH,ORDER,QUOTE,ESCROW,CRON backend
     class DB,STORAGE,REALTIME storage
     class PRICE_API,QR_SCAN,BLOCKCHAIN external
     class USER,ALLY,ADMIN users
@@ -102,7 +102,7 @@ graph TB
 
     subgraph "🏗️ Services Layer"
         ORDER_SVC[📋 Order Service<br/>• Create/Update Orders<br/>• State Management<br/>• Timeout Handling]
-        PRICING_SVC[💱 Pricing Service<br/>• Rate Calculation<br/>• Quote Management<br/>• Price Updates]
+        QUOTE_SVC[💱 Quote Service<br/>• Rate Calculation<br/>• Quote Management<br/>• Price Updates]
         ESCROW_SVC[🏦 Escrow Service<br/>• Fund Management<br/>• Release/Refund<br/>• Blockchain Integration]
         USER_SVC[👤 User Service<br/>• Authentication<br/>• Role Management<br/>• Profile Management]
         NOTIFY_SVC[🔔 Notification Service<br/>• Real-time Updates<br/>• Status Changes<br/>• Push Notifications]
@@ -129,17 +129,17 @@ graph TB
     %% API → Services Connections
     AUTH_API --> USER_SVC
     ORDER_API --> ORDER_SVC
-    QUOTE_API --> PRICING_SVC
+    QUOTE_API --> QUOTE_SVC
     ADMIN_API --> ORDER_SVC
     UPLOAD_API --> FILES_STORAGE
     CRON_API --> ORDER_SVC
-    CRON_API --> PRICING_SVC
+    CRON_API --> QUOTE_SVC
     
     %% Services → Data Connections
     ORDER_SVC --> ORDERS_DB
     ORDER_SVC --> ESCROW_SVC
     ORDER_SVC --> NOTIFY_SVC
-    PRICING_SVC --> QUOTES_DB
+    QUOTE_SVC --> QUOTES_DB
     USER_SVC --> USERS_DB
     ESCROW_SVC --> ESCROW_DB
     NOTIFY_SVC --> REALTIME_DB
@@ -155,7 +155,7 @@ graph TB
     
     class HOME,USER_DASH,ALLY_DASH,ADMIN_DASH,QR_COMP,WALLET_COMP frontend
     class AUTH_API,ORDER_API,QUOTE_API,ADMIN_API,UPLOAD_API,CRON_API api
-    class ORDER_SVC,PRICING_SVC,ESCROW_SVC,USER_SVC,NOTIFY_SVC services
+    class ORDER_SVC,QUOTE_SVC,ESCROW_SVC,USER_SVC,NOTIFY_SVC services
     class ORDERS_DB,USERS_DB,QUOTES_DB,ESCROW_DB,LOGS_DB,FILES_STORAGE,REALTIME_DB data
 ```
 
@@ -185,7 +185,7 @@ graph TB
     end
     
     subgraph "External Integrations"
-        COINGECKO[CoinGecko API<br/>Price Feeds]
+        binance_api/coingecko[binance_api/coingecko API<br/>Price Feeds]
         Mantle[Mantle Network<br/>USDT Transactions]
         PRIVY_AUTH[Privy Authentication<br/>Wallet Management]
     end
@@ -210,7 +210,7 @@ graph TB
     SUPABASE --> STORAGE_SUB
     SUPABASE --> ROW_SECURITY
     
-    NEXTJS_API --> COINGECKO
+    NEXTJS_API --> binance_api/coingecko
     NEXTJS_API --> Mantle
     PRIVY --> PRIVY_AUTH
     
@@ -229,7 +229,7 @@ graph TB
     class NEXTJS,TAILWIND,PRIVY,SUPABASE_CLIENT frontend
     class NEXTJS_API,TYPESCRIPT,VERCEL_CRON backend
     class SUPABASE,POSTGRESQL,REALTIME_SUB,STORAGE_SUB,ROW_SECURITY database
-    class COINGECKO,MANTLE,PRIVY_AUTH external
+    class binance_api/coingecko,MANTLE,PRIVY_AUTH external
     class VERCEL,GITHUB,MONITORING devops
 ```
 
@@ -240,7 +240,7 @@ sequenceDiagram
     participant U as 👤 User
     participant F as 🖥️ Frontend
     participant API as ⚙️ Next.js API
-    participant P as 💱 Pricing Service
+    participant Q as 💱 Quote Service
     participant E as 🏦 Escrow Service
     participant DB as 🗄️ Supabase
     participant BC as ⛓️ Mantle
@@ -251,10 +251,10 @@ sequenceDiagram
     F->>API: POST /api/quote
     Note right of API: {qrData, amountBOB}
     
-    API->>P: Calculate USDT equivalent
-    P->>DB: Fetch current rate
-    DB-->>P: USDT/BOB rate
-    P-->>API: Calculated USDT amount
+    API->>Q: Calculate USDT equivalent
+    Q->>DB: Fetch current rate
+    DB-->>Q: USDT/BOB rate
+    Q-->>API: Calculated USDT amount
     
     API->>DB: Create order (PENDING_PAYMENT)
     Note right of DB: Fixed rate for 3 min
@@ -285,10 +285,10 @@ graph TB
         AUTH_LOGOUT[POST /api/auth/logout\nDisconnect wallet]
     end
     
-    subgraph "💱 Quote & Pricing APIs"
+    subgraph "💱 Quote APIs"
         QUOTE_CREATE[POST /api/quote\nCalculate USDT amount]
         QUOTE_REFRESH[GET /api/quote/:id/refresh\nUpdate expired quote]
-        PRICING_CURRENT[GET /api/pricing/current\nGet current rates]
+        QUOTES_CURRENT[GET /api/quotes/current\nGet current rates]
     end
     
     subgraph "📋 Order Management APIs"
@@ -314,7 +314,7 @@ graph TB
     
     subgraph "⏰ Automated Cron APIs"
         CRON_TIMEOUTS[POST /api/cron/check-timeouts\nProcess expired orders]
-        CRON_PRICING[POST /api/cron/update-pricing\nUpdate exchange rates]
+        CRON_QUOTES[POST /api/cron/update-quotes\nUpdate exchange rates]
         CRON_CLEANUP[POST /api/cron/cleanup\nClean old data]
     end
 
@@ -327,11 +327,11 @@ graph TB
     classDef cron fill:#f3e5f5
     
     class AUTH_CONNECT,AUTH_PROFILE,AUTH_LOGOUT auth
-    class QUOTE_CREATE,QUOTE_REFRESH,PRICING_CURRENT quote
+    class QUOTE_CREATE,QUOTE_REFRESH,QUOTES_CURRENT quote
     class ORDER_CREATE,ORDER_LIST,ORDER_DETAIL,ORDER_TAKE,ORDER_PROOF,ORDER_AVAILABLE order
     class UPLOAD_QR,UPLOAD_PROOF upload
     class ADMIN_DASHBOARD,ADMIN_ORDERS,ADMIN_USERS,ADMIN_CONFIG admin
-    class CRON_TIMEOUTS,CRON_PRICING,CRON_CLEANUP cron
+    class CRON_TIMEOUTS,CRON_QUOTES,CRON_CLEANUP cron
 ```
 
 ## Architectural Principles

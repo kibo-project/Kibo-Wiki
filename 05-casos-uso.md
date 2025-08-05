@@ -13,7 +13,7 @@ mindmap
     
     👤 Usuario Pagos
       Escanear QR Bancario
-      Ver Cotización Tiempo Real
+      Ver Quote Tiempo Real
       Pagar USDT via Privy
       Rastrear Estado Orden
       Ver Historial Órdenes
@@ -68,7 +68,7 @@ Criterios Técnicos:
 ✅ Usar Privy SDK para autenticación
 ✅ Guardar wallet_address en tabla users
 ✅ Generar JWT token para sesión
-✅ Verificar balance USDT en Polygon
+✅ Verificar balance USDT en mantle
 ✅ Manejar estados: loading, success, error
 
 Estimación: 2 días
@@ -145,7 +145,7 @@ Y el sistema extrae automáticamente:
   - Cualquier metadata disponible
 Y me permite ingresar el monto manualmente en BOB
 Y valida que el monto esté entre 10-10,000 BOB
-Y procede automáticamente a calcular cotización
+Y procede automáticamente a calcular quote
 
 Casos Edge Manejados:
 ❌ QR no válido o corrupto → "QR no reconocido, intenta otro"
@@ -164,54 +164,54 @@ Prioridad: Crítica
 Dependencias: Investigación formatos QR bancarios Bolivia
 ```
 
-### **US005: Ver Cotización y Confirmar Pago**
+### **US005: Ver Quote y Confirmar Pago**
 ```gherkin
 Como usuario que escaneó QR válido
-Quiero ver la cotización exacta antes de pagar
+Quiero ver el quote exacto antes de pagar
 Para decidir si procedo con la transacción
 
 DADO que escaneé un QR válido y ingresé monto BOB
-CUANDO el sistema calcula la cotización
+CUANDO el sistema calcula el quote
 ENTONCES veo en pantalla clara:
   - Monto en BOB que quiero pagar
-  - Cotización USDT/BOB actual y fuente
+  - Quote USDT/BOB actual y fuente
   - Monto exacto en USDT que pagaré
   - Fee de red estimado en USDT
   - Total final exacto
   - Countdown timer 3:00 para decidir
 Y puedo confirmar o cancelar la transacción
-Y si no decido en 3 minutos, se actualiza cotización automáticamente
+Y si no decido en 3 minutos, se actualiza quote automáticamente
 
 Validaciones en Tiempo Real:
 ✅ Verificar que tengo suficiente USDT en wallet
-✅ Confirmar que cotización no es más antigua de 30 segundos
-✅ Validar que red Polygon está operativa
+✅ Confirmar que quote no es más antiguo de 30 segundos
+✅ Validar que red mantle está operativa
 ✅ Mostrar advertencia si balance insuficiente
 
 Flujos Posibles:
 ✅ Confirmar → Proceder a flujo de pago
 ✅ Cancelar → Volver a dashboard sin crear orden
-✅ Timeout → Recalcular cotización automáticamente
+✅ Timeout → Recalcular quote automáticamente
 ✅ Insufficient funds → Mostrar error + sugerir conseguir más USDT
 
 Estimación: 3 días
 Prioridad: Crítica
-Dependencias: US004 + integración pricing API
+Dependencias: US004 + integración quote API
 ```
 
 ### **US006: Pagar USDT al Escrow Centralizado**
 ```gherkin
-Como usuario que confirmó cotización
+Como usuario que confirmó quote
 Quiero transferir mis USDT de forma segura
 Para que un aliado procese mi pago fiat
 
-DADO que confirmé la cotización mostrada
+DADO que confirmé el quote mostrado
 CUANDO hago clic en "Confirmar y Pagar"
 ENTONCES Privy abre mi wallet conectada
 Y veo los detalles exactos de la transacción:
   - Destinatario: dirección escrow de Kibo
   - Monto: cantidad exacta USDT calculada
-  - Network: Polygon
+  - Network: mantle
   - Estimated gas fee
 Y confirmo la transacción en mi wallet
 Y el sistema detecta el pago en blockchain
@@ -224,7 +224,7 @@ Estados de Loading Claros:
 🔄 "Buscando aliado..." (hasta que alguien tome la orden)
 
 Errores Manejados:
-❌ Transacción rechazada por usuario → Volver a cotización
+❌ Transacción rechazada por usuario → Volver a quote
 ❌ Insufficient gas fee → "Necesitas más ETH para gas"
 ❌ Network congestion → "Red congestionada, reintentando..."
 ❌ Transaction failed → "Error en transacción, intenta de nuevo"
@@ -293,7 +293,7 @@ Y puedo ver detalles completos de cada orden
 Y puedo exportar mi historial en CSV
 
 Detalles por Orden:
-📋 ID orden, timestamps, montos, cotización usada
+📋 ID orden, timestamps, montos, quote usado
 🤝 Info del aliado (si asignado)
 ⛓️ Hashes de transacciones blockchain
 📄 Comprobante de pago (si completada)
@@ -519,33 +519,33 @@ Para ofrecer precios justos y competitivos a usuarios
 DADO que el sistema está operando
 CUANDO pasan 30 segundos desde la última actualización
 ENTONCES ejecuto job automático que:
-  - Consulta CoinGecko API para precio USDT/USD actual
+  - Consulta binance_api/coingecko API para precio USDT/USD actual
   - Consulta fuente confiable para tasa USD/BOB
   - Calcula tasa USDT/BOB resultante
-  - Guarda nueva cotización en tabla quotes
-  - Marca cotización anterior como is_active=false
-Y las nuevas órdenes usan automáticamente la cotización más reciente
-Y las órdenes en progreso mantienen su cotización fija original
+  - Guarda nuevo quote en tabla quotes
+  - Marca quote anterior como is_active=false
+Y las nuevas órdenes usan automáticamente el quote más reciente
+Y las órdenes en progreso mantienen su quote fijo original
 
 Manejo de Errores:
-❌ API externa no responde → Usar última cotización válida + log warning
+❌ API externa no responde → Usar último quote válido + log warning
 ❌ Cambio > 5% vs precio anterior → Log alerta para admin review
-❌ No hay cotización en últimos 10 min → Bloquear creación nuevas órdenes
+❌ No hay quote en últimos 10 min → Bloquear creación nuevas órdenes
 
 Fuentes de Datos:
-🔧 Primaria: CoinGecko API (gratis, confiable)
+🔧 Primaria: binance_api/coingecko API (gratis, confiable)
 🔧 Fallback: CoinMarketCap API
 🔧 Tasa BOB: Banco Central Bolivia o servicio financiero local
 
 Implementación Técnica:
 ✅ Vercel Cron Job cada 30 segundos
-✅ Next.js API route: /api/cron/update-pricing
+✅ Next.js API route: /api/cron/update-quotes
 ✅ Retry automático 3 veces si falla
 ✅ Logs en tabla quotes para auditoría
 
 Estimación: 3 días
 Prioridad: Crítica
-Dependencias: Investigación APIs pricing + configuración cron jobs
+Dependencias: Investigación APIs quotes + configuración cron jobs
 ```
 
 ### **US015: Manejar Timeouts y Expiraciones Automáticamente**
@@ -699,7 +699,7 @@ Métricas del Día Actual:
 
 Estado del Sistema:
 - Uptime de la aplicación
-- Estado de APIs externas (CoinGecko, etc.)
+- Estado de APIs externas (binance_api/coingecko, etc.)
 - Saldo del wallet escrow
 - Órdenes en cada estado (gráfico en tiempo real)
 - Alertas activas del sistema
@@ -742,10 +742,10 @@ Límites de Órdenes:
 - MAX_ORDER_AMOUNT_BOB: 10000 → editable
 - MAX_DAILY_ORDERS_PER_USER: sin límite → configurable
 
-Parámetros de Pricing:
+Parámetros de Quotes:
 - QUOTE_UPDATE_INTERVAL_SECONDS: 30 → editable
 - PRICE_CHANGE_ALERT_THRESHOLD: 5% → editable
-- PRICING_SOURCE: coingecko → seleccionable
+- QUOTE_SOURCE: binance_api/coingecko → seleccionable
 
 Y todos los cambios aplican inmediatamente sin reiniciar
 Y se registra quién cambió qué parámetro y cuándo
@@ -822,12 +822,12 @@ Como sistema resiliente
 Quiero manejar problemas de conectividad blockchain
 Para que la experiencia de usuario sea robusta
 
-DADO que hay problemas en Polygon network
+DADO que hay problemas en mantle network
 CUANDO un usuario intenta realizar acciones que requieren blockchain
 ENTONCES el sistema responde apropiadamente:
 
 Durante Creación de Orden:
-- Detectar si Polygon RPC está respondiendo
+- Detectar si mantle RPC está respondiendo
 - Si red lenta (> 30s para confirmación): mostrar "Red congestionada, puede tomar más tiempo"
 - Si red no disponible: mostrar "Red temporalmente no disponible, intenta en unos minutos"
 - Pausar temporalmente creación de nuevas órdenes
@@ -901,12 +901,12 @@ Dependencias: US015, US016 + comprehensive logging
 ## 📊 Plan de Desarrollo por Sprint
 
 ### **🚀 Sprint 1 (2 semanas) - Autenticación y Core Usuario**
-**Objetivo**: Usuario puede escanear QR, ver cotización y pagar USDT
+**Objetivo**: Usuario puede escanear QR, ver quote y pagar USDT
 
 **User Stories Incluidas:**
 - [ ] US001: Conectar Wallet Usuario (2d)
 - [ ] US004: Escanear QR Bancario (4d) 
-- [ ] US005: Ver Cotización (3d)
+- [ ] US005: Ver Quote (3d)
 - [ ] US006: Pagar USDT (5d)
 - [ ] US014: Cotizaciones automáticas (3d)
 
@@ -914,13 +914,13 @@ Dependencias: US015, US016 + comprehensive logging
 - [ ] Setup Privy + Supabase + Vercel
 - [ ] Investigar formatos QR bancarios Bolivia
 - [ ] Configurar wallet escrow para recibir USDT
-- [ ] Implementar API CoinGecko para pricing
+- [ ] Implementar API binance_api/coingecko para quotes
 - [ ] Setup Vercel Cron Jobs
 
 **Criterios de Éxito Sprint 1:**
 ✅ Usuario puede conectar wallet via Privy
 ✅ Usuario puede escanear QR bancario boliviano  
-✅ Usuario ve cotización USDT/BOB en tiempo real
+✅ Usuario ve quote USDT/BOB en tiempo real
 ✅ Usuario puede transferir USDT al escrow
 ✅ Sistema actualiza cotizaciones cada 30s automáticamente
 
@@ -1016,7 +1016,7 @@ Dependencias: US015, US016 + comprehensive logging
 
 ### **✅ Funcionalidades Core Validadas**
 - [x] **Usuario puede pagar QR bancario boliviano con USDT** 
-  - Escanear QR → Ver cotización → Pagar → Completado
+  - Escanear QR → Ver quote → Pagar → Completado
 - [x] **Aliado puede procesar pagos y ganar USDT**
   - Ver órdenes → Tomar → Pagar en banco → Subir comprobante → Recibir USDT
 - [x] **Sistema maneja timeouts automáticamente**
@@ -1053,8 +1053,8 @@ Dependencias: US015, US016 + comprehensive logging
 ### **🔴 Riesgos Técnicos Altos**
 | Riesgo | Probabilidad | Impacto | Mitigación |
 |--------|--------------|---------|------------|
-| **API pricing no confiable** | Media | Alto | Múltiples fuentes + fallbacks |
-| **Polygon network issues** | Media | Alto | Queue system + retry logic |
+| **API quotes no confiable** | Media | Alto | Múltiples fuentes + fallbacks |
+| **mantle network issues** | Media | Alto | Queue system + retry logic |
 | **Escrow wallet comprometida** | Baja | Crítico | Multi-sig + monitoring + limits |
 | **Concurrencia en tomar órdenes** | Alta | Medio | Database locks + validación doble |
 

@@ -20,7 +20,7 @@ stateDiagram-v2
     REFUNDED --> [*] : Proceso terminado
 
     note right of PENDING_PAYMENT
-        ⏱️ Cotización fija por 3 minutos
+        ⏱️ Quote fijo por 3 minutos
         💳 Usuario debe confirmar pago USDT
         🚫 Sin opción de cancelación manual
     end note
@@ -54,7 +54,7 @@ stateDiagram-v2
 ✨ Trigger: Usuario envía QR + monto BOB
 
 Características:
-• Cotización USDT/BOB fija durante 3 minutos
+• Quote USDT/BOB fijo durante 3 minutos
 • Usuario ve countdown en tiempo real
 • No se puede cancelar manualmente
 • Si no paga → orden se elimina (EXPIRED)
@@ -141,11 +141,11 @@ sequenceDiagram
     participant U as 👤 Usuario
     participant F as 🖥️ Frontend
     participant API as ⚙️ Next.js API
-    participant P as 💱 Pricing Service
+    participant Q as 💱 Quote Service
     participant E as 🏦 Escrow Service
     participant DB as 🗄️ Supabase
     participant W as 🔗 Privy Wallet
-    participant BC as ⛓️ Polygon
+    participant BC as ⛓️ mantle
 
     Note over U,BC: FLUJO USUARIO: Crear y Pagar Orden
 
@@ -304,7 +304,7 @@ graph TB
     end
     
     subgraph "📊 Línea de Tiempo Exitosa"
-        T0[00:00 Usuario escanea QR] --> T1[00:30 Ve cotización]
+        T0[00:00 Usuario escanea QR] --> T1[00:30 Ve quote]
         T1 --> T2[02:00 Confirma pago]
         T2 --> T3[03:30 AVAILABLE]
         T3 --> T4[04:00 Aliado toma]
@@ -327,7 +327,7 @@ graph TB
 | **Penalización por timeout** | Aliado que deja expirar se bloquea 30 min | `INSERT INTO ally_penalties (penalty_until = NOW() + INTERVAL '30 minutes')` |
 | **No re-tomar orden expirada** | Mismo aliado no puede retomar orden que dejó expirar | `WHERE order_id NOT IN (SELECT order_id FROM ally_penalties WHERE ally_id = ?)` |
 | **País específico** | Aliados solo ven órdenes de su país | `WHERE user.country = ally.country` |
-| **Cotización única** | Una cotización por orden, fija hasta completar | `UPDATE quotes SET is_active=false WHERE order_id = ?` |
+| **Quote único** | Un quote por orden, fijo hasta completar | `UPDATE quotes SET is_active=false WHERE order_id = ?` |
 
 ### 🚨 **Manejo de Errores Automático**
 

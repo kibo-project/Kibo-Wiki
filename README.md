@@ -1,6 +1,6 @@
 # 📚 Kibo App
 
-Kibo allows users to pay any traditional bank transfer QR (fiat) using cryptocurrencies like USDT, through a P2P network of partners who act as a bridge between the crypto world and the banking system.
+Kibo allows users to pay any traditional bank transfer QR (fiat) using cryptocurrencies like USDT, through a P2P network of aliados who act as a bridge between the crypto world and the banking system.
 
 ## 📋 **Documentation Index**
 
@@ -13,6 +13,7 @@ Kibo allows users to pay any traditional bank transfer QR (fiat) using cryptocur
 | [`03-data-model.md`](./03-modelo-datos.md)                   | Complete database schema and relationships     | Backend Dev                 |
 | [`04-navigation-ux.md`](./04-navegacion-ux.md)             | Navigation maps and user experience            | Frontend Dev + UX           |
 | [`05-use-cases.md`](./05-casos-uso.md)                     | Detailed user stories and sprint plan          | Product Owner + Entire team |
+| [`06-api-design.md`](./06-api-design.md)                   | Complete API specification and endpoints       | Backend Dev + Frontend Dev  |
 
 ## 🚀 **Tech Stack**
 
@@ -31,9 +32,9 @@ Kibo allows users to pay any traditional bank transfer QR (fiat) using cryptocur
 graph LR
     A[👤 User<br/>Scans QR + BOB] --> B[🚱 System<br/>Calculates USDT]
     B --> C[💳 User<br/>Pays USDT]
-    C --> D[🤝 Partner<br/>Takes order]
-    D --> E[🏦 Partner<br/>Pays bank QR]
-    E --> F[📄 Partner<br/>Uploads receipt]
+    C --> D[🤝 Aliado<br/>Takes order]
+    D --> E[🏦 Aliado<br/>Pays bank QR]
+    E --> F[📄 Aliado<br/>Uploads receipt]
     F --> G[✅ System<br/>Releases USDT]
 ```
 
@@ -43,7 +44,7 @@ graph LR
 | ---------------- | ------- | ------------------------- |
 | PENDING\_PAYMENT | 3 min   | Delete order              |
 | AVAILABLE        | 5 min   | Automatic refund          |
-| TAKEN            | 5 min   | Refund + penalize partner |
+| TAKEN            | 5 min   | Refund + penalize aliado |
 
 ## 🎯 **MVP - Initial Scope**
 
@@ -54,7 +55,7 @@ graph LR
 * ✅ Automatic receipt verification (no admin)
 * ✅ Automatic timeouts and refunds
 * ✅ Basic dashboard for each user type
-* ✅ Penalty system for partners
+* ✅ Penalty system for aliados
 
 ### **❌ Not Included in MVP**
 
@@ -69,8 +70,8 @@ graph LR
 
 | Sprint       | Duration | Goal           | Deliverable                    |
 | ------------ | -------- | -------------- | ------------------------------ |
-| **Sprint 1** | 1 weeks  | User Core      | User can pay orders            |
-| **Sprint 2** | 1 weeks  | Partner Core   | Fully functional flow          |
+| **Sprint 1** | 2 weeks  | User Core      | User can pay orders            |
+| **Sprint 2** | 2 weeks  | Aliado Core    | Fully functional flow          |
 | **Sprint 3** | 2 weeks  | Robust System  | Automatic timeouts and refunds |
 | **Sprint 4** | 1 week   | Admin + Polish | Production-ready MVP           |
 
@@ -81,7 +82,8 @@ graph LR
 1. Read **01-system-architecture.md** to understand the big picture
 2. Review **02-states-and-flows.md** to understand business logic
 3. Study **03-data-model.md** for database design
-4. Implement according to **05-use-cases.md** (prioritized user stories)
+4. Review **06-api-design.md** for API specifications and endpoints
+5. Implement according to **05-use-cases.md** (prioritized user stories)
 
 ### **For Product Owner**
 
