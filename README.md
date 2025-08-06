@@ -4,7 +4,7 @@ Kibo allows users to pay any traditional bank transfer QR (fiat) using cryptocur
 
 ## 📋 **Documentation Index**
 
-### **🗷️ Phase 1 - Core Documentation (Essential)**
+### **🗂️ Phase 1 - Core Documentation (Essential)**
 
 | File                                                       | Description                                    | Audience                    |
 | ---------------------------------------------------------- | ---------------------------------------------- | --------------------------- |

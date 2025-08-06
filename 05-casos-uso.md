@@ -1,262 +1,262 @@
-# 📋 Kibo - Casos de Uso y User Stories
+# 📋 Kibo - Use Cases and User Stories
 
-## Épicas Principales del MVP
+## Main MVP Epics
 
 ```mermaid
 mindmap
   root((🚀 Kibo MVP))
-    🔐 Autenticación
-      Conectar Wallet
-      Detectar Rol Usuario
-      Mantener Sesión
-      Desconectar Wallet
+    🔐 Authentication
+      Connect Wallet
+      Detect User Role
+      Maintain Session
+      Disconnect Wallet
     
-    👤 Usuario Pagos
-      Escanear QR Bancario
-      Ver Quote Tiempo Real
-      Pagar USDT via Privy
-      Rastrear Estado Orden
-      Ver Historial Órdenes
+    👤 User Payments
+      Scan Bank QR
+      View Real-time Quote
+      Pay USDT via Privy
+      Track Order Status
+      View Order History
       
-    🤝 Aliado Procesos
-      Ver Órdenes Disponibles
-      Tomar Orden Exclusiva
-      Pagar QR en App Bancaria
-      Subir Comprobante Pago
-      Recibir USDT Automático
-      Ver Estadísticas Ganancias
+    🤝 Ally Processes
+      View Available Orders
+      Take Exclusive Order
+      Pay QR in Banking App
+      Upload Payment Receipt
+      Receive USDT Automatically
+      View Earnings Statistics
       
-    ⚙️ Sistema Automático
-      Calcular Cotizaciones
-      Manejar Timeouts
-      Procesar Refunds
-      Liberar Fondos
-      Penalizar Aliados
-      Logs Auditoría
+    ⚙️ Automatic System
+      Calculate Quotes
+      Handle Timeouts
+      Process Refunds
+      Release Funds
+      Penalize Allies
+      Audit Logs
       
     👨‍💼 Admin Monitor
-      Dashboard Tiempo Real
-      Gestionar Configuración
-      Revisar Logs Sistema
-      Administrar Usuarios
-      Alertas Automáticas
+      Real-time Dashboard
+      Manage Configuration
+      Review System Logs
+      Administer Users
+      Automatic Alerts
 ```
 
-## 🔐 ÉPICA 1: Autenticación y Gestión de Sesiones
+## 🔐 EPIC 1: Authentication and Session Management
 
-### **US001: Conectar Wallet como Usuario**
+### **US001: Connect Wallet as User**
 ```gherkin
-Como usuario nuevo
-Quiero conectar mi wallet crypto
-Para poder realizar pagos con mis criptomonedas
+As a new user
+I want to connect my crypto wallet
+So I can make payments with my cryptocurrencies
 
-DADO que estoy en la landing page de Kibo
-CUANDO hago clic en "Conectar Wallet"  
-ENTONCES se abre Privy para seleccionar mi wallet
-Y puedo conectar MetaMask, WalletConnect, Coinbase Wallet
-Y el sistema detecta mi dirección de wallet automáticamente
-Y se crea mi perfil como role="user" en la base de datos
-Y soy redirigido al User Dashboard
-Y veo mi balance de USDT actualizado
+GIVEN I am on the Kibo landing page
+WHEN I click "Connect Wallet"
+THEN Privy opens to select my wallet
+AND I can connect MetaMask, WalletConnect, Coinbase Wallet
+AND the system automatically detects my wallet address
+AND my profile is created with role="user" in the database
+AND I am redirected to the User Dashboard
+AND I see my updated USDT balance
 
-Flujos de Error:
-❌ SI rechazo la conexión → Regreso a landing con mensaje
-❌ SI mi wallet no tiene USDT → Warning pero puedo continuar
-❌ SI hay error de red → Mensaje "Intenta de nuevo" con retry
+Error Flows:
+❌ IF I reject the connection → Return to landing with message
+❌ IF my wallet has no USDT → Warning but I can continue
+❌ IF there's a network error → Message "Try again" with retry
 
-Criterios Técnicos:
-✅ Usar Privy SDK para autenticación
-✅ Guardar wallet_address en tabla users
-✅ Generar JWT token para sesión
-✅ Verificar balance USDT en mantle
-✅ Manejar estados: loading, success, error
+Technical Criteria:
+✅ Use Privy SDK for authentication
+✅ Save wallet_address in users table
+✅ Generate JWT token for session
+✅ Verify USDT balance on Mantle
+✅ Handle states: loading, success, error
 
-Estimación: 2 días
-Prioridad: Crítica
-Dependencias: Configuración Privy + Supabase
+Estimation: 2 days
+Priority: Critical
+Dependencies: Privy + Supabase configuration
 ```
 
-### **US002: Conectar Wallet como Aliado**
+### **US002: Connect Wallet as Ally**
 ```gherkin
-Como persona interesada en ser aliado
-Quiero registrarme como aliado de Kibo
-Para poder ganar USDT procesando pagos de otros usuarios
+As a person interested in being an ally
+I want to register as a Kibo ally
+So I can earn USDT by processing payments from other users
 
-DADO que estoy en la landing page
-CUANDO hago clic en "Ser Aliado"
-ENTONCES conecto mi wallet igual que usuario normal
-Y lleno formulario adicional:
-  - País de operación (Bolivia por ahora)
-  - Bancos que manejo (Banco Unión, BNB, etc.)
-  - Acepto términos específicos de aliados
-Y mi rol se marca como role="ally" en base de datos
-Y soy redirigido al Ally Dashboard
-Y veo las órdenes disponibles inmediatamente
+GIVEN I am on the landing page
+WHEN I click "Become an Ally"
+THEN I connect my wallet the same as a normal user
+AND I fill out an additional form:
+  - Country of operation (Bolivia for now)
+  - Banks I handle (Banco Unión, BNB, etc.)
+  - Accept specific ally terms
+AND my role is marked as role="ally" in the database
+AND I am redirected to the Ally Dashboard
+AND I see available orders immediately
 
-Validaciones Específicas:
-✅ Wallet no puede estar ya registrada como otro rol
-✅ País debe estar en lista de países soportados
-✅ Debe tener mínimo 1 USDT para verificar wallet funcional
-✅ Formulario debe validar datos bancarios
+Specific Validations:
+✅ Wallet cannot already be registered with another role
+✅ Country must be in supported countries list
+✅ Must have minimum 1 USDT to verify functional wallet
+✅ Form must validate banking data
 
-Estimación: 3 días  
-Prioridad: Crítica
-Dependencias: US001 completado
+Estimation: 3 days
+Priority: Critical
+Dependencies: US001 completed
 ```
 
-### **US003: Mantener Sesión Activa**
+### **US003: Maintain Active Session**
 ```gherkin
-Como usuario autenticado (user o ally)
-Quiero que mi sesión se mantenga activa
-Para no tener que reconectarme constantemente
+As an authenticated user (user or ally)
+I want my session to remain active
+So I don't have to reconnect constantly
 
-DADO que ya conecté mi wallet
-CUANDO cierro y reabro la aplicación
-O cuando navego entre páginas
-ENTONCES mi sesión se mantiene activa automáticamente
-Y no necesito reconectar wallet
-Y mis datos se cargan automáticamente
-Y mi role se detecta correctamente
+GIVEN I have already connected my wallet
+WHEN I close and reopen the application
+OR when I navigate between pages
+THEN my session remains active automatically
+AND I don't need to reconnect wallet
+AND my data loads automatically
+AND my role is detected correctly
 
-Casos Especiales:
-✅ Sesión expira después de 7 días de inactividad
-✅ Si cambio de wallet address → forzar re-autenticación
-✅ Si hay error en token JWT → logout automático
+Special Cases:
+✅ Session expires after 7 days of inactivity
+✅ If wallet address changes → force re-authentication
+✅ If JWT token error → automatic logout
 
-Estimación: 1 día
-Prioridad: Alta
+Estimation: 1 day
+Priority: High
 ```
 
-## 👤 ÉPICA 2: Usuario - Realizar Pagos Crypto-to-Fiat
+## 👤 EPIC 2: User - Make Crypto-to-Fiat Payments
 
-### **US004: Escanear QR Bancario para Pagar**
+### **US004: Scan Bank QR to Pay (Simplified MVP)**
 ```gherkin
-Como usuario con USDT
-Quiero escanear un QR de pago bancario
-Para pagarlo usando mis criptomonedas
+As a user with USDT
+I want to scan a bank payment QR
+So I can pay it using my cryptocurrencies
 
-DADO que estoy en User Dashboard
-CUANDO hago clic en "Escanear QR"
-ENTONCES se abre la cámara nativa del dispositivo
-Y puedo escanear cualquier QR de pago bancario boliviano
-Y el sistema extrae automáticamente:
-  - Banco de destino
-  - Cuenta o referencia
-  - Cualquier metadata disponible
-Y me permite ingresar el monto manualmente en BOB
-Y valida que el monto esté entre 10-10,000 BOB
-Y procede automáticamente a calcular quote
+GIVEN I am on the User Dashboard
+WHEN I click "Scan QR"
+THEN the device's native camera opens
+AND I can scan any QR (MVP: no automatic validation)
+AND the system saves the QR image to show to the ally
+AND it allows me to manually enter:
+  - Amount in BOB
+  - Basic banking information (optional for MVP)
+AND validates that the amount is between 10-10,000 BOB
+AND automatically proceeds to calculate quote
 
-Casos Edge Manejados:
-❌ QR no válido o corrupto → "QR no reconocido, intenta otro"
-❌ Cámara no disponible → Opción de subir imagen desde galería
-❌ Monto fuera de rango → "Monto debe estar entre 10-10,000 BOB"
-❌ QR de otro país → "Solo QRs bancarios de Bolivia soportados"
+Edge Cases Handled:
+❌ Camera not available → Option to upload image from gallery
+❌ Amount out of range → "Amount must be between 10-10,000 BOB"
+❌ Image too large → Automatic compression
 
-Criterios Técnicos:
-✅ Usar API nativa de cámara del browser
-✅ Parsear múltiples formatos de QR bancarios bolivianos
-✅ Validación client-side y server-side de montos
-✅ Fallback a upload manual si cámara falla
+MVP Technical Criteria:
+✅ Use browser's native camera API
+✅ Save QR image without parsing content
+✅ Client-side and server-side amount validation
+✅ Fallback to manual upload if camera fails
+❌ Automatic QR parsing (post-MVP)
+❌ Specific validation of Bolivian banks (post-MVP)
 
-Estimación: 4 días
-Prioridad: Crítica
-Dependencias: Investigación formatos QR bancarios Bolivia
+Estimation: 2 days
+Priority: Critical
+Dependencies: None (simplified MVP)
 ```
 
-### **US005: Ver Quote y Confirmar Pago**
+### **US005: View Quote and Confirm Payment**
 ```gherkin
-Como usuario que escaneó QR válido
-Quiero ver el quote exacto antes de pagar
-Para decidir si procedo con la transacción
+As a user who scanned a valid QR
+I want to see the exact quote before paying
+So I can decide whether to proceed with the transaction
 
-DADO que escaneé un QR válido y ingresé monto BOB
-CUANDO el sistema calcula el quote
-ENTONCES veo en pantalla clara:
-  - Monto en BOB que quiero pagar
-  - Quote USDT/BOB actual y fuente
-  - Monto exacto en USDT que pagaré
-  - Fee de red estimado en USDT
-  - Total final exacto
-  - Countdown timer 3:00 para decidir
-Y puedo confirmar o cancelar la transacción
-Y si no decido en 3 minutos, se actualiza quote automáticamente
+GIVEN I scanned a valid QR and entered BOB amount
+WHEN the system calculates the quote
+THEN I see clearly on screen:
+  - Amount in BOB that I want to pay
+  - Current USDT/BOB quote and source
+  - Exact amount in USDT that I will pay
+  - Estimated network fee in USDT
+  - Exact final total
+  - 3:00 countdown timer to decide
+AND I can confirm or cancel the transaction
+AND if I don't decide in 3 minutes, the quote updates automatically
 
-Validaciones en Tiempo Real:
-✅ Verificar que tengo suficiente USDT en wallet
-✅ Confirmar que quote no es más antiguo de 30 segundos
-✅ Validar que red mantle está operativa
-✅ Mostrar advertencia si balance insuficiente
+Real-time Validations:
+✅ Verify that I have sufficient USDT in wallet
+✅ Confirm that quote is not older than 30 seconds
+✅ Validate that Mantle network is operational
+✅ Show warning if balance insufficient
 
-Flujos Posibles:
-✅ Confirmar → Proceder a flujo de pago
-✅ Cancelar → Volver a dashboard sin crear orden
-✅ Timeout → Recalcular quote automáticamente
-✅ Insufficient funds → Mostrar error + sugerir conseguir más USDT
+Possible Flows:
+✅ Confirm → Proceed to payment flow
+✅ Cancel → Return to dashboard without creating order
+✅ Timeout → Recalculate quote automatically
+✅ Insufficient funds → Show error + suggest getting more USDT
 
-Estimación: 3 días
-Prioridad: Crítica
-Dependencias: US004 + integración quote API
+Estimation: 3 days
+Priority: Critical
+Dependencies: US004 + quote API integration
 ```
 
-### **US006: Pagar USDT al Escrow Centralizado**
+### **US006: Pay USDT to Centralized Escrow**
 ```gherkin
-Como usuario que confirmó quote
-Quiero transferir mis USDT de forma segura
-Para que un aliado procese mi pago fiat
+As a user who confirmed the quote
+I want to transfer my USDT securely
+So that an ally can process my fiat payment
 
-DADO que confirmé el quote mostrado
-CUANDO hago clic en "Confirmar y Pagar"
-ENTONCES Privy abre mi wallet conectada
-Y veo los detalles exactos de la transacción:
-  - Destinatario: dirección escrow de Kibo
-  - Monto: cantidad exacta USDT calculada
-  - Network: mantle
+GIVEN I confirmed the displayed quote
+WHEN I click "Confirm and Pay"
+THEN Privy opens my connected wallet
+AND I see the exact transaction details:
+  - Recipient: Kibo's escrow address
+  - Amount: exact calculated USDT amount
+  - Network: Mantle
   - Estimated gas fee
-Y confirmo la transacción en mi wallet
-Y el sistema detecta el pago en blockchain
-Y mi orden se marca como status="AVAILABLE"
-Y veo "Buscando aliado disponible..." con spinner
+AND I confirm the transaction in my wallet
+AND the system detects the payment on blockchain
+AND my order is marked as status="AVAILABLE"
+AND I see "Looking for available ally..." with spinner
 
-Estados de Loading Claros:
-🔄 "Confirmando transacción..." (hasta confirmar en blockchain)
-🔄 "Transacción pendiente..." (esperando confirmaciones)
-🔄 "Buscando aliado..." (hasta que alguien tome la orden)
+Clear Loading States:
+🔄 "Confirming transaction..." (until confirmed on blockchain)
+🔄 "Transaction pending..." (waiting for confirmations)
+🔄 "Looking for ally..." (until someone takes the order)
 
-Errores Manejados:
-❌ Transacción rechazada por usuario → Volver a quote
-❌ Insufficient gas fee → "Necesitas más ETH para gas"
-❌ Network congestion → "Red congestionada, reintentando..."
-❌ Transaction failed → "Error en transacción, intenta de nuevo"
+Handled Errors:
+❌ Transaction rejected by user → Return to quote
+❌ Insufficient gas fee → "You need more ETH for gas"
+❌ Network congestion → "Network congested, retrying..."
+❌ Transaction failed → "Transaction error, try again"
 
-Criterios Técnicos:
-✅ Integrar con Privy para manejo de transacciones
-✅ Escuchar eventos de blockchain para confirmación
-✅ Crear registro en tabla orders con status="PENDING_PAYMENT"
-✅ Actualizar a "AVAILABLE" cuando se confirme pago
-✅ Configurar webhook o polling para detectar transacciones
+Technical Criteria:
+✅ Integrate with Privy for transaction handling
+✅ Listen to blockchain events for confirmation
+✅ Create record in orders table with status="PENDING_PAYMENT"
+✅ Update to "AVAILABLE" when payment is confirmed
+✅ Configure webhook or polling to detect transactions
 
-Estimación: 5 días
-Prioridad: Crítica
-Dependencias: US005 + configuración wallet escrow
+Estimation: 5 days
+Priority: Critical
+Dependencies: US005 + escrow wallet configuration
 ```
 
-### **US007: Rastrear Estado de Mi Orden en Tiempo Real**
+### **US007: Track My Order Status in Real Time**
 ```gherkin
-Como usuario que ya pagó su orden
-Quiero ver el progreso de mi pago en tiempo real
-Para saber cuándo estará completado
+As a user who has already paid their order
+I want to see the progress of my payment in real time
+So I know when it will be completed
 
 DADO que ya transferí USDT al escrow
 CUANDO estoy en la pantalla de seguimiento de orden
-ENTONCES veo actualizaciones automáticas cada 10 segundos:
+ENTONCES veo actualizaciones automáticas instantáneas via Supabase Realtime:
   - ⏳ "Buscando aliado disponible..." (status=AVAILABLE)
-  - 👤 "Aliado Juan (0x56...78) asignado" (status=TAKEN)  
+  - 👤 "Aliado Juan (0x56...78) asignado" (status=TAKEN) - actualización < 1 segundo  
   - 💳 "Aliado procesando pago bancario..." (status=TAKEN)
-  - ✅ "¡Pago completado exitosamente!" (status=COMPLETED)
-Y veo countdown de timeouts restantes cuando aplique
-Y recibo notificaciones push en momentos clave
-Y puedo ver detalles expandidos de la orden
+  - ✅ "¡Pago completado exitosamente!" (status=COMPLETED) - actualización instantánea
+Y veo countdown de timeouts calculados en tiempo real
+Y recibo notificaciones push automáticas en momentos clave
+Y puedo ver detalles expandidos de la orden sin recargar
 
 Información Mostrada por Estado:
 📋 AVAILABLE: "Buscando aliado... (⏱️ expira en 4:30)"
@@ -269,9 +269,16 @@ Notificaciones Push:
 🔔 Pago completado exitosamente  
 🔔 Orden expirada - USDT reembolsado
 
-Estimación: 3 días
+Criterios Técnicos MVP:
+✅ Implementar Supabase Realtime subscription para orders
+✅ Initial load con GET /api/orders/:id una sola vez
+✅ Push automático de cambios de estado sin polling
+✅ Cálculo de countdown en frontend con expires_at
+✅ Notificaciones browser nativas para eventos críticos
+
+Estimación: 2 días (reducida gracias a Supabase Realtime)
 Prioridad: Alta
-Dependencias: US006 + Supabase Realtime + notificaciones
+Dependencias: US006 + Supabase configurado
 ```
 
 ### **US008: Ver Historial de Mis Órdenes**
@@ -303,33 +310,33 @@ Prioridad: Media
 Dependencias: US007 completado
 ```
 
-## 🤝 ÉPICA 3: Aliado - Procesar Órdenes y Ganar USDT
+## 🤝 EPIC 3: Ally - Process Orders and Earn USDT
 
-### **US009: Ver Órdenes Disponibles para Procesar**
+### **US009: View Available Orders to Process**
 ```gherkin
-Como aliado registrado
-Quiero ver las órdenes que puedo procesar
-Para elegir cuáles tomar según mi capacidad
+As a registered ally
+I want to see the orders I can process
+So I can choose which ones to take based on my capacity
 
-DADO que estoy logueado como aliado
-CUANDO accedo a mi dashboard
-ENTONCES veo sección "Órdenes Disponibles" que se actualiza cada 10s
-Y veo para cada orden disponible:
-  - Monto en BOB a pagar
-  - Mi ganancia exacta en USDT
-  - Tiempo restante antes de expirar
-  - Banco de destino
-  - Botón "TOMAR" prominente
-Y veo solo órdenes que puedo procesar:
-  - De mi país (Bolivia)
-  - Que no estén tomadas por otro aliado
-  - Solo si no tengo orden activa
-  - Solo si no estoy penalizado
-Y las órdenes se ordenan por urgencia (más cercanas a expirar primero)
+GIVEN I am logged in as an ally
+WHEN I access my dashboard
+THEN I see "Available Orders" section that updates every 10s
+AND I see for each available order:
+  - Amount in BOB to pay
+  - My exact profit in USDT
+  - Time remaining before expiration
+  - Destination bank
+  - Prominent "TAKE" button
+AND I see only orders I can process:
+  - From my country (Bolivia)
+  - That are not taken by another ally
+  - Only if I don't have an active order
+  - Only if I'm not penalized
+AND orders are sorted by urgency (closest to expiring first)
 
-Filtros Automáticos:
-✅ Solo órdenes con status="AVAILABLE"
-✅ Solo de mi country="BO"
+Automatic Filters:
+✅ Only orders with status="AVAILABLE"
+✅ Only from my country="BO"
 ✅ Solo si mi ally_id no está en otra orden TAKEN
 ✅ Solo si no tengo penalizaciones activas
 ✅ Excluir órdenes que dejé expirar antes
@@ -898,17 +905,17 @@ Prioridad: Media
 Dependencias: US015, US016 + comprehensive logging
 ```
 
-## 📊 Plan de Desarrollo por Sprint
+## 📊 Development Plan by Sprint
 
-### **🚀 Sprint 1 (2 semanas) - Autenticación y Core Usuario**
-**Objetivo**: Usuario puede escanear QR, ver quote y pagar USDT
+### **🚀 Sprint 1 (2 weeks) - Authentication and Core User**
+**Objective**: User can scan QR, view quote and pay USDT
 
-**User Stories Incluidas:**
-- [ ] US001: Conectar Wallet Usuario (2d)
-- [ ] US004: Escanear QR Bancario (4d) 
-- [ ] US005: Ver Quote (3d)
-- [ ] US006: Pagar USDT (5d)
-- [ ] US014: Cotizaciones automáticas (3d)
+**Included User Stories:**
+- [ ] US001: Connect User Wallet (2d)
+- [ ] US004: Scan Bank QR (4d) 
+- [ ] US005: View Quote (3d)
+- [ ] US006: Pay USDT (5d)
+- [ ] US014: Automatic Quotes (3d)
 
 **Tareas Técnicas Críticas:**
 - [ ] Setup Privy + Supabase + Vercel

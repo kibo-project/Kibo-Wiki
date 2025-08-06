@@ -1,76 +1,76 @@
-# 🎨 Kibo - Navegación y Experiencia de Usuario
+# 🎨 Kibo - Navigation and User Experience
 
-## Mapa de Navegación General
+## General Navigation Map
 
 ```mermaid
 graph TD
-    START[🌐 Landing Page<br/>kibo.app] --> AUTH{👤 Conectar Wallet?}
+    START[🌐 Landing Page<br/>kibo.app] --> AUTH{👤 Connect Wallet?}
     
-    AUTH -->|Wallet conectada| ROLE{🎭 ¿Qué rol tiene?}
-    AUTH -->|Rechaza conexión| START
+    AUTH -->|Wallet connected| ROLE{🎭 What role does user have?}
+    AUTH -->|Rejects connection| START
     
     ROLE -->|role: 'user'| USER_HOME[👤 User Dashboard]
     ROLE -->|role: 'ally'| ALLY_HOME[🤝 Ally Dashboard] 
     ROLE -->|role: 'admin'| ADMIN_HOME[👨‍💼 Admin Panel]
     
-    subgraph "🔵 Flujo Usuario - Realizar Pagos"
-        USER_HOME --> SCAN[📱 Escanear QR]
-        USER_HOME --> HISTORY_U[📋 Mis Órdenes]
+    subgraph "🔵 User Flow - Make Payments"
+        USER_HOME --> SCAN[📱 Scan QR]
+        USER_HOME --> HISTORY_U[📋 My Orders]
         
-        SCAN --> QUOTE[💱 Ver Quote<br/>⏱️ 3:00 countdown]
-        QUOTE -->|Confirmar| PAY[💳 Pagar USDT<br/>Privy Wallet]
-        QUOTE -->|Cancelar| USER_HOME
+        SCAN --> QUOTE[💱 View Quote<br/>⏱️ 3:00 countdown]
+        QUOTE -->|Confirm| PAY[💳 Pay USDT<br/>Privy Wallet]
+        QUOTE -->|Cancel| USER_HOME
         
-        PAY -->|Éxito| WAITING[⏳ Esperando Aliado<br/>Estado: AVAILABLE]
-        PAY -->|Error| ERROR_PAY[❌ Error de Pago]
+        PAY -->|Success| WAITING[⏳ Waiting for Ally<br/>Status: AVAILABLE]
+        PAY -->|Error| ERROR_PAY[❌ Payment Error]
         
-        WAITING --> TRACKING[👀 Rastrear Orden<br/>Estado: TAKEN]
-        TRACKING --> SUCCESS_U[✅ Pago Completado<br/>Estado: COMPLETED]
+        WAITING --> TRACKING[👀 Track Order<br/>Status: TAKEN]
+        TRACKING --> SUCCESS_U[✅ Payment Completed<br/>Status: COMPLETED]
         
-        HISTORY_U --> DETAIL_U[🔍 Detalle de Orden]
+        HISTORY_U --> DETAIL_U[🔍 Order Details]
         ERROR_PAY --> USER_HOME
     end
     
-    subgraph "🟢 Flujo Aliado - Procesar Órdenes"
-        ALLY_HOME --> AVAILABLE[📋 Órdenes Disponibles<br/>Auto-refresh 10s]
-        ALLY_HOME --> ACTIVE[⚡ Mi Orden Activa]
-        ALLY_HOME --> STATS[📊 Mis Estadísticas]
+    subgraph "🟢 Ally Flow - Process Orders"
+        ALLY_HOME --> AVAILABLE[📋 Available Orders<br/>Auto-refresh 10s]
+        ALLY_HOME --> ACTIVE[⚡ My Active Order]
+        ALLY_HOME --> STATS[📊 My Statistics]
         
-        AVAILABLE --> TAKE[🎯 Tomar Orden<br/>⏱️ 5:00 countdown]
-        TAKE --> QR_VIEW[👀 Ver QR a Pagar]
-        QR_VIEW --> BANK_APP[🏦 App Bancaria<br/>Externa]
-        BANK_APP --> UPLOAD[📤 Subir Comprobante]
-        UPLOAD --> SUCCESS_A[✅ USDT Recibido<br/>Auto-aprobado]
+        AVAILABLE --> TAKE[🎯 Take Order<br/>⏱️ 5:00 countdown]
+        TAKE --> QR_VIEW[👀 View QR to Pay]
+        QR_VIEW --> BANK_APP[🏦 Banking App<br/>External]
+        BANK_APP --> UPLOAD[📤 Upload Receipt]
+        UPLOAD --> SUCCESS_A[✅ USDT Received<br/>Auto-approved]
         
         ACTIVE --> QR_VIEW
-        STATS --> EARNINGS[💰 Historial Ganancias]
+        STATS --> EARNINGS[💰 Earnings History]
     end
     
-    subgraph "🔴 Flujo Admin - Monitoreo"
-        ADMIN_HOME --> MONITOR[📊 Monitor Sistema<br/>Tiempo real]
-        ADMIN_HOME --> USERS_MGMT[👥 Gestión Usuarios]
-        ADMIN_HOME --> CONFIG[⚙️ Configuración]
+    subgraph "🔴 Admin Flow - Monitoring"
+        ADMIN_HOME --> MONITOR[📊 System Monitor<br/>Real time]
+        ADMIN_HOME --> USERS_MGMT[👥 User Management]
+        ADMIN_HOME --> CONFIG[⚙️ Configuration]
         
-        MONITOR --> LOGS[📝 Logs del Sistema]
-        MONITOR --> ALERTS[🚨 Alertas Activas]
+        MONITOR --> LOGS[📝 System Logs]
+        MONITOR --> ALERTS[🚨 Active Alerts]
         
-        CONFIG --> TIMEOUTS[⏰ Ajustar Timeouts]
-        CONFIG --> LIMITS[💰 Límites de Órdenes]
-        CONFIG --> RATES[💱 Gestión Cotizaciones]
+        CONFIG --> TIMEOUTS[⏰ Adjust Timeouts]
+        CONFIG --> LIMITS[💰 Order Limits]
+        CONFIG --> RATES[💱 Quote Management]
         
-        USERS_MGMT --> USER_DETAIL[👤 Detalle Usuario]
-        USER_DETAIL --> PENALTIES[⚠️ Penalizaciones]
+        USERS_MGMT --> USER_DETAIL[👤 User Details]
+        USER_DETAIL --> PENALTIES[⚠️ Penalties]
     end
     
-    %% Casos de error y timeout
-    WAITING -.->|Timeout 5min| TIMEOUT_AVAILABLE[⏰ Nadie tomó orden]
-    TRACKING -.->|Timeout 5min| TIMEOUT_TAKEN[⏰ Aliado no completó]
+    %% Error and timeout cases
+    WAITING -.->|Timeout 5min| TIMEOUT_AVAILABLE[⏰ Nobody took order]
+    TRACKING -.->|Timeout 5min| TIMEOUT_TAKEN[⏰ Ally didn't complete]
     
-    TIMEOUT_AVAILABLE --> REFUND[💰 Refund Automático]
+    TIMEOUT_AVAILABLE --> REFUND[💰 Automatic Refund]
     TIMEOUT_TAKEN --> REFUND
     REFUND --> USER_HOME
     
-    %% Estilos
+    %% Styles
     classDef userFlow fill:#e3f2fd
     classDef allyFlow fill:#e8f5e8  
     classDef adminFlow fill:#ffebee
@@ -88,130 +88,130 @@ graph TD
     class TIMEOUT_AVAILABLE,TIMEOUT_TAKEN,REFUND timeout
 ```
 
-## Estados de Navegación por Pantalla
+## Navigation States by Screen
 
-### 📱 **App Estado Usuario**
+### 📱 **User App State**
 
 ```mermaid
 stateDiagram-v2
     [*] --> Landing
     
-    Landing --> UserDashboard : Wallet conectada
-    Landing --> Landing : Wallet rechazada
+    Landing --> UserDashboard : Wallet connected
+    Landing --> Landing : Wallet rejected
     
-    UserDashboard --> ScanQR : Escanear QR
-    UserDashboard --> OrderHistory : Mis Órdenes
-    UserDashboard --> Profile : Mi Perfil
+    UserDashboard --> ScanQR : Scan QR
+    UserDashboard --> OrderHistory : My Orders
+    UserDashboard --> Profile : My Profile
     
-    ScanQR --> QuoteScreen : QR válido
-    ScanQR --> ScanError : QR inválido
-    ScanError --> ScanQR : Reintentar
+    ScanQR --> QuoteScreen : Valid QR
+    ScanQR --> ScanError : Invalid QR
+    ScanError --> ScanQR : Retry
     
-    QuoteScreen --> PaymentScreen : Confirmar
-    QuoteScreen --> UserDashboard : Cancelar
+    QuoteScreen --> PaymentScreen : Confirm
+    QuoteScreen --> UserDashboard : Cancel
     QuoteScreen --> QuoteExpired : Timeout 3min
-    QuoteExpired --> ScanQR : Nuevo quote
+    QuoteExpired --> ScanQR : New quote
     
-    PaymentScreen --> WaitingScreen : Pago confirmado
-    PaymentScreen --> PaymentError : Pago falló
-    PaymentError --> QuoteScreen : Reintentar
+    PaymentScreen --> WaitingScreen : Payment confirmed
+    PaymentScreen --> PaymentError : Payment failed
+    PaymentError --> QuoteScreen : Retry
     
-    WaitingScreen --> TrackingScreen : Aliado asignado
+    WaitingScreen --> TrackingScreen : Ally assigned
     WaitingScreen --> TimeoutRefund : Timeout 5min
     
-    TrackingScreen --> SuccessScreen : Orden completada
-    TrackingScreen --> TimeoutRefund : Aliado timeout
+    TrackingScreen --> SuccessScreen : Order completed
+    TrackingScreen --> TimeoutRefund : Ally timeout
     
-    TimeoutRefund --> UserDashboard : USDT devuelto
-    SuccessScreen --> UserDashboard : Nueva orden
+    TimeoutRefund --> UserDashboard : USDT returned
+    SuccessScreen --> UserDashboard : New order
     
-    OrderHistory --> OrderDetail : Seleccionar orden
-    OrderDetail --> OrderHistory : Volver
-    OrderHistory --> UserDashboard : Volver
+    OrderHistory --> OrderDetail : Select order
+    OrderDetail --> OrderHistory : Go back
+    OrderHistory --> UserDashboard : Go back
     
-    Profile --> UserDashboard : Volver
+    Profile --> UserDashboard : Go back
 
     note right of QuoteScreen
         Countdown 3:00 visible
-        Quote fijo durante timer
-        Auto-refresh si expira
+        Fixed quote during timer
+        Auto-refresh if expires
     end note
 
     note right of WaitingScreen
-        Estado en tiempo real
-        Buscando aliado...
-        Notificación cuando asignen
+        Real-time status
+        Searching for ally...
+        Notification when assigned
     end note
 ```
 
-### 🤝 **App Estado Aliado**
+### 🤝 **Ally App State**
 
 ```mermaid
 stateDiagram-v2
     [*] --> Landing
     
-    Landing --> AllyDashboard : Wallet conectada
+    Landing --> AllyDashboard : Wallet connected
     
-    AllyDashboard --> AvailableOrders : Ver órdenes
-    AllyDashboard --> ActiveOrder : Mi orden activa
-    AllyDashboard --> StatsScreen : Estadísticas
-    AllyDashboard --> PenaltyScreen : Si penalizado
+    AllyDashboard --> AvailableOrders : View orders
+    AllyDashboard --> ActiveOrder : My active order
+    AllyDashboard --> StatsScreen : Statistics
+    AllyDashboard --> PenaltyScreen : If penalized
     
-    AvailableOrders --> ProcessOrder : Tomar orden
-    AvailableOrders --> AllyDashboard : Volver
-    AvailableOrders --> OrderTaken : Orden tomada por otro
+    AvailableOrders --> ProcessOrder : Take order
+    AvailableOrders --> AllyDashboard : Go back
+    AvailableOrders --> OrderTaken : Order taken by another
     OrderTaken --> AvailableOrders : Auto-refresh
     
-    ProcessOrder --> UploadProof : Después de pagar
+    ProcessOrder --> UploadProof : After paying
     ProcessOrder --> ProcessTimeout : Timeout 5min
-    ProcessTimeout --> AllyDashboard : Penalizado 30min
+    ProcessTimeout --> AllyDashboard : Penalized 30min
     
-    UploadProof --> SuccessScreen : Comprobante subido
-    UploadProof --> ProcessTimeout : Timeout restante
+    UploadProof --> SuccessScreen : Receipt uploaded
+    UploadProof --> ProcessTimeout : Remaining timeout
     
-    SuccessScreen --> AllyDashboard : USDT recibido
+    SuccessScreen --> AllyDashboard : USDT received
     
-    ActiveOrder --> ProcessOrder : Continuar orden
-    ActiveOrder --> AllyDashboard : Volver
+    ActiveOrder --> ProcessOrder : Continue order
+    ActiveOrder --> AllyDashboard : Go back
     
-    StatsScreen --> EarningsDetail : Ver ganancias
-    StatsScreen --> AllyDashboard : Volver
-    EarningsDetail --> StatsScreen : Volver
+    StatsScreen --> EarningsDetail : View earnings
+    StatsScreen --> AllyDashboard : Go back
+    EarningsDetail --> StatsScreen : Go back
     
-    PenaltyScreen --> AllyDashboard : Penalización expirada
+    PenaltyScreen --> AllyDashboard : Penalty expired
 
     note right of ProcessOrder
-        QR grande más datos bancarios
+        Large QR plus banking data
         Countdown 5:00 visible
-        Botón Ya pagué
+        "Already paid" button
     end note
 
     note right of UploadProof
-        Cámara o galería
-        Preview imagen
-        Validación tamaño menor 5MB
+        Camera or gallery
+        Image preview
+        Size validation under 5MB
     end note
 ```
 
-## Pantallas Detalladas por Tipo de Usuario
+## Detailed Screens by User Type
 
-### 🌐 **Landing Page (Punto de Entrada)**
+### 🌐 **Landing Page (Entry Point)**
 
 ```mermaid
 graph TB
     subgraph "🌐 Landing Page - Layout"
-        HEADER[Kibo Logo\n🔗 Conectar Wallet]
-        HERO[Paga cualquier QR bancario\nusando criptomonedas\n💡 Escanea QR → Paga USDT → Aliado procesa]
-        FEATURES[✅ Pagos en segundos\n✅ Red de aliados confiables\n✅ Soporte BOB ↔ USDT\n✅ Tarifas competitivas]
-        CTA_SECTION[🚀 Comenzar Ahora\n🤝 Ser Aliado]
-        DEMO[📱 Ver Demo\n📊 Estadísticas en Vivo]
-        FOOTER[📞 Contacto\n📄 Términos\n🔒 Seguridad]
+        HEADER[Kibo Logo\n🔗 Connect Wallet]
+        HERO[Pay any bank QR code\nusing cryptocurrencies\n💡 Scan QR → Pay USDT → Ally processes]
+        FEATURES[✅ Payments in seconds\n✅ Reliable ally network\n✅ BOB ↔ USDT support\n✅ Competitive fees]
+        CTA_SECTION[🚀 Get Started\n🤝 Become an Ally]
+        DEMO[📱 View Demo\n📊 Live Statistics]
+        FOOTER[📞 Contact\n📄 Terms\n🔒 Security]
     end
     
-    subgraph "Interacciones"
-        CONNECT_WALLET[Conectar Wallet via Privy]
-        ROLE_DETECTION[Detectar rol del usuario]
-        REDIRECT_DASHBOARD[Redirigir a dashboard correspondiente]
+    subgraph "Interactions"
+        CONNECT_WALLET[Connect Wallet via Privy]
+        ROLE_DETECTION[Detect user role]
+        REDIRECT_DASHBOARD[Redirect to corresponding dashboard]
     end
 
     HEADER --> CONNECT_WALLET
@@ -219,53 +219,53 @@ graph TB
     CONNECT_WALLET --> ROLE_DETECTION
     ROLE_DETECTION --> REDIRECT_DASHBOARD
 
-    %% Estilos personalizados
+    %% Custom styles
     style HEADER fill:#e3f2fd
     style HERO fill:#e8f5e8
     style CTA_SECTION fill:#fff3e0
 ```
 
-### 👤 **User Dashboard - Panel Principal**
+### 👤 **User Dashboard - Main Panel**
 
 ```mermaid
 graph TB
     subgraph "User Dashboard Mobile First"
-        NAV[Inicio - Órdenes - Perfil - Logout]
+        NAV[Home - Orders - Profile - Logout]
         
         subgraph "Balance Card"
-            BALANCE[Mi Balance 250.00 USDT - Red mantle]
-            REFRESH_BALANCE[Actualizar Balance]
+            BALANCE[My Balance 250.00 USDT - Mantle network]
+            REFRESH_BALANCE[Refresh Balance]
         end
         
-        subgraph "Nueva Orden Card Principal"
-            QR_BTN[Escanear QR para Pagar]
-            OR_TEXT[--- O ---]
-            MANUAL_BTN[Ingresar datos manualmente - Próximamente]
+        subgraph "New Order Main Card"
+            QR_BTN[Scan QR to Pay]
+            OR_TEXT[--- OR ---]
+            MANUAL_BTN[Enter data manually - Coming Soon]
         end
         
-        subgraph "Órdenes Recientes Card"
-            RECENT_HEADER[Mis Órdenes Recientes]
-            ORDER1[150 BOB - 21.5 USDT - Completado]
-            ORDER2[200 BOB - 28.7 USDT - En proceso]
-            ORDER3[100 BOB - 14.3 USDT - Expirado]
-            VIEW_ALL[Ver todas mis órdenes]
+        subgraph "Recent Orders Card"
+            RECENT_HEADER[My Recent Orders]
+            ORDER1[150 BOB - 21.5 USDT - Completed]
+            ORDER2[200 BOB - 28.7 USDT - In Progress]
+            ORDER3[100 BOB - 14.3 USDT - Expired]
+            VIEW_ALL[View all my orders]
         end
         
-        subgraph "Estadísticas Personales"
-            STATS[Total procesado 1250 BOB - Ahorrado en fees 5 porciento]
+        subgraph "Personal Statistics"
+            STATS[Total processed 1250 BOB - Saved in fees 5 percent]
         end
         
-        subgraph "Estado del Sistema"
-            SYSTEM_STATUS[Sistema operativo - 12 aliados activos]
+        subgraph "System Status"
+            SYSTEM_STATUS[System operational - 12 active allies]
         end
     end
     
-    %% Interacciones
-    QR_BTN --> SCAN_QR_FLOW[Flujo escanear QR]
-    ORDER1 --> ORDER_DETAIL[Ver detalle orden]
-    ORDER2 --> ORDER_TRACKING[Seguimiento en tiempo real]
+    %% Interactions
+    QR_BTN --> SCAN_QR_FLOW[Scan QR flow]
+    ORDER1 --> ORDER_DETAIL[View order details]
+    ORDER2 --> ORDER_TRACKING[Real-time tracking]
     ORDER3 --> ORDER_DETAIL
-    VIEW_ALL --> ORDER_HISTORY[Lista completa órdenes]
+    VIEW_ALL --> ORDER_HISTORY[Complete order list]
     
     style QR_BTN fill:#4caf50,color:#fff
     style ORDER2 fill:#fff3e0
